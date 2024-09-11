@@ -9,10 +9,12 @@ package chess;
 public class ChessMove {
     private final ChessPosition start;
     private final ChessPosition end;
+    private ChessPiece piece;
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
         this.start = startPosition;
         this.end = endPosition;
+        this.piece = null;
     }
 
     /**
