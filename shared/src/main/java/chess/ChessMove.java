@@ -7,23 +7,26 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessMove {
-
+    private final ChessPosition start;
+    private final ChessPosition end;
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
+        this.start = startPosition;
+        this.end = endPosition;
     }
 
     /**
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        throw new RuntimeException("Not implemented");
+        return start;
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        throw new RuntimeException("Not implemented");
+        return end;
     }
 
     /**
