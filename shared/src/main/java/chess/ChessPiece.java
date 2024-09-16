@@ -53,14 +53,16 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         PieceType pType = getPieceType(); //gets piece type
         ChessGame.TeamColor tColor = getTeamColor(); //gets piece color
-        //if pos is start don't add
-        if (myPosition != null) { //if pos is not start
-            if (pType == PieceType.KING) {}
-            else if (pType == PieceType.QUEEN) {}
-            else if (pType == PieceType.BISHOP) {}
-            else if (pType == PieceType.KNIGHT) {}
-            else if (pType == PieceType.ROOK) {}
-            else if (pType == PieceType.PAWN) {}
+        //make temporary postion
+        for (int col = myPosition.getColumn(); col <= myPosition.getColumn() + 1; col++) {
+            for (int row = myPosition.getRow(); row <= myPosition.getRow() + 1; row++) {
+                if (pType == PieceType.KING) {}
+                else if (pType == PieceType.QUEEN) {}
+                else if (pType == PieceType.BISHOP) {}
+                else if (pType == PieceType.KNIGHT) {}
+                else if (pType == PieceType.ROOK) {}
+                else if (pType == PieceType.PAWN) {}
+            }
         }
         //if same team is blocking don't continue to or past it
         //if different team is blocking capture and take their place
