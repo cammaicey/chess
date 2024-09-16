@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -10,6 +11,7 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+
     private final ChessGame.TeamColor teamColor;
     private ChessPiece.PieceType pieceType;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
