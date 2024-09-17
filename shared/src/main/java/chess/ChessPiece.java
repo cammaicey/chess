@@ -58,6 +58,7 @@ public class ChessPiece {
         int srow = myPosition.getRow(); //starting row
         int scol = myPosition.getColumn(); //starting col
         ChessPosition pos = null;
+        boolean pawnStart = true;
         ChessMove move;
         ArrayList<ChessMove> moves = new ArrayList<>(); //store valid moves
         for (int col = 1; col < 9; col++) {
@@ -162,7 +163,32 @@ public class ChessPiece {
                         }
                     }
                 }
-                else if (pType == PieceType.PAWN) {}
+                else if (pType == PieceType.PAWN) {
+                    if (tColor == ChessGame.TeamColor.WHITE) {
+                        if (srow == 2 && (row == srow+1 || row == srow+2) && col == scol) { //start and in reach
+                            pos = new ChessPosition(row, col);
+                            move = new ChessMove(myPosition, pos, getPieceType());
+                            moves.add(move);
+                        }
+                        else if (row == srow+1 && col == scol) {
+                            pos = new ChessPosition(row, col);
+                            move = new ChessMove(myPosition, pos, getPieceType());
+                            moves.add(move);
+                        }
+                    }
+                    else {
+                        if (srow == 7 && (row == srow - 1 || row == srow - 2) && col == scol) { //start and in reach
+                            pos = new ChessPosition(row, col);
+                            move = new ChessMove(myPosition, pos, getPieceType());
+                            moves.add(move);
+                        } else if (row == srow-1 && col == scol) {
+                            pos = new ChessPosition(row, col);
+                            move = new ChessMove(myPosition, pos, getPieceType());
+                            moves.add(move);
+
+                        }
+                    }
+                }
             }
         }
         //if same team is blocking don't continue to or past it
