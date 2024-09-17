@@ -165,10 +165,7 @@ public class ChessPiece {
                 else if (pType == PieceType.KNIGHT) {
                     if (((col == scol+2 || col == scol-2) && (row == srow+1 || row == srow-1)) ||
                             ((row == srow+2 || row == srow-2) && (col == scol+1 || col == scol-1))) {
-                        if (scol-2 < 1 || srow+2 > 8) { //out of bounds on top and right
-                            continue;
-                        }
-                        pos = new ChessPosition(row, col);
+                        pos = new ChessPosition(row+1, col+1);
                         move = new ChessMove(myPosition, pos, getPieceType());
                         moves.add(move);
                     }
