@@ -150,7 +150,14 @@ public class ChessPiece {
                         }
                     }
                 }
-                else if (pType == PieceType.KNIGHT) {}
+                else if (pType == PieceType.KNIGHT) {
+                    if (((col == scol+2 || col == scol-2) && (row == srow+1 || row == srow-1)) ||
+                            ((row == srow+2 || row == srow-2) && (col == scol+1 || col == scol-1))) {
+                        pos = new ChessPosition(row, col);
+                        move = new ChessMove(myPosition, pos, getPieceType());
+                        moves.add(move);
+                    }
+                }
                 else if (pType == PieceType.ROOK) {
                     if (col == scol || row == srow) {
                         if (col == scol && row == srow) {
@@ -165,6 +172,7 @@ public class ChessPiece {
                 }
                 else if (pType == PieceType.PAWN) {
                     if (tColor == ChessGame.TeamColor.WHITE) {
+                        //check capture condition
                         if (srow == 2 && (row == srow+1 || row == srow+2) && col == scol) { //start and in reach
                             pos = new ChessPosition(row, col);
                             move = new ChessMove(myPosition, pos, getPieceType());
@@ -177,6 +185,7 @@ public class ChessPiece {
                         }
                     }
                     else {
+                        //check capture condition
                         if (srow == 7 && (row == srow - 1 || row == srow - 2) && col == scol) { //start and in reach
                             pos = new ChessPosition(row, col);
                             move = new ChessMove(myPosition, pos, getPieceType());
