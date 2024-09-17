@@ -84,7 +84,44 @@ public class ChessPiece {
                         moves.add(move);
                     }
                 }
-                else if (pType == PieceType.QUEEN) {}
+                else if (pType == PieceType.QUEEN) {
+                    if (col == scol || row == srow) { //imported from rook
+                        if (col == scol && row == srow) {
+                            continue;
+                        }
+                        else {
+                            pos = new ChessPosition(row, col);
+                            move = new ChessMove(myPosition, pos, getPieceType());
+                            moves.add(move);
+                        }
+                    }
+                    else {
+                        if (col != myPosition.getColumn() && row != myPosition.getRow()) { //can't move in the row and column
+                            while (tcol < 9 && tcol > 0 && trow > 0 && trow < 9) { //stay in bounds
+                                if (tcol == myPosition.getColumn() && trow == myPosition.getRow()) { //we reached starting pos
+                                    pos = new ChessPosition(row, col);
+                                    move = new ChessMove(myPosition, pos, getPieceType());
+                                    moves.add(move);
+                                    break;
+                                }
+                                else if (col < myPosition.getColumn()) { // column less than position
+                                    tcol++;
+                                    if (row < myPosition.getRow()) { //row less than
+                                        trow++;
+                                    }
+                                    else {trow--;}
+                                }
+                                else if (col > myPosition.getColumn()) { //column greater than position
+                                    tcol--;
+                                    if (row > myPosition.getRow()) { //row greater than
+                                        trow--;
+                                    }
+                                    else {trow++;}
+                                }
+                            }
+                        }
+                    }
+                }
                 else if (pType == PieceType.BISHOP) {
                     //check which diagonal
                     if (col != myPosition.getColumn() && row != myPosition.getRow()) { //can't move in the row and column
