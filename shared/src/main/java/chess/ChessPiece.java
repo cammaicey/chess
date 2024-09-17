@@ -13,8 +13,8 @@ import java.util.Objects;
 public class ChessPiece {
 
     private final ChessGame.TeamColor teamColor;
-    private ChessPiece.PieceType pieceType;
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    private PieceType pieceType;
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.teamColor = pieceColor;
         this.pieceType = type;
     }
@@ -55,7 +55,7 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         PieceType pType = getPieceType(); //gets piece type
         ChessGame.TeamColor tColor = getTeamColor(); //gets piece color
-        ChessPosition pos;
+        ChessPosition pos = null;
         ChessMove move;
         ArrayList<ChessMove> moves = new ArrayList<>(); //store valid moves
         for (int col = 1; col < 9; col++) {
@@ -68,28 +68,26 @@ public class ChessPiece {
                     //check which diagonal
                     if (col != myPosition.getColumn() && row != myPosition.getRow()) { //can't move in the row and column
                         while (tcol < 9 && tcol > 0 && trow > 0 && trow < 9) { //stay in bounds
-                            if (tcol == myPosition.getColumn() && trow == myPosition.getRow()) { // the move is valid
+                            if (tcol == myPosition.getColumn() && trow == myPosition.getRow()) { //we reached startinf pos
                                 pos = new ChessPosition(row, col);
                                 move = new ChessMove(myPosition, pos, getPieceType());
                                 moves.add(move);
                                 break;
                             }
-                            else if (col < myPosition.getColumn() && row < myPosition.getRow()) {
+                            else if (col < myPosition.getColumn()) { // column less than position
                                 tcol++;
-                                trow++;
-                            } // column and row less than position
-                            else if (col < myPosition.getColumn() && row > myPosition.getRow()) {
-                                tcol++;
-                                trow--;
-                            } //column less than position, row greater than position
-                            else if (col > myPosition.getColumn() && row > myPosition.getRow()) {
+                                if (row < myPosition.getRow()) { //row less than
+                                    trow++;
+                                }
+                                else {trow--;}
+                            }
+                            else if (col > myPosition.getColumn()) { //column greater than position
                                 tcol--;
-                                trow--;
-                            } //column and row greater than position
-                            else if (col > myPosition.getColumn() && row < myPosition.getRow()) {
-                                tcol--;
-                                trow++;
-                            } //column greater than position, row less tan position
+                                if (row > myPosition.getRow()) { //row greater than
+                                    trow--;
+                                }
+                                else {trow++;}
+                            }
                         }
                     }
                 }
