@@ -204,9 +204,32 @@ public class ChessPiece {
                 }
             }
         }
-        //if same team is blocking don't continue to or past it
-
-        //if different team is blocking capture and take their place
+        moves = getCaptureBlock(moves, myPosition, board);
         return moves;
+    }
+
+    public ArrayList<ChessMove> getCaptureBlock(ArrayList<ChessMove> currMoves, ChessPosition myPosition, ChessBoard board) {
+        ArrayList<ChessMove> newMoves = new ArrayList<>();
+        if (notClearMoves(currMoves, board)) {
+            if (this.pieceType == PieceType.KING) {}
+            else if (this.pieceType == PieceType.QUEEN) {}
+            else if (this.pieceType == PieceType.BISHOP) {}
+            else if (this.pieceType == PieceType.KNIGHT) {}
+            else if (this.pieceType == PieceType.ROOK) {}
+            else if (this.pieceType == PieceType.PAWN) {}
+            return newMoves;
+        }
+        else {
+            return currMoves;
+        }
+    }
+
+    public boolean notClearMoves(ArrayList<ChessMove> currMoves, ChessBoard board) {
+        for (ChessMove move : currMoves) {
+            if (board.taken(move.getEndPosition())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
