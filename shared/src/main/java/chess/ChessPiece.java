@@ -180,32 +180,60 @@ public class ChessPiece {
                     }
                 }
                 else if (pType == PieceType.PAWN) {
+                    ChessPosition tempPos;
                     if (tColor == ChessGame.TeamColor.WHITE) {
                         //check capture condition
-                        if (srow == 1 && (row == srow+1 || row == srow+2) && col == scol) { //start and in reach
-                            move = new ChessMove(myPosition, pos, getPieceType());
-                            moves.add(move);
+                        if (row == srow+1 && (col == scol-1 || col == scol+1)) { //check capture
+                            if (board.taken(pos) && board.getPiece(pos).getTeamColor() != tColor) {
+                                move = new ChessMove(myPosition, pos, getPieceType());
+                                moves.add(move);
+                            }
+                        }
+                        else if (srow == 1 && (row == srow+1 || row == srow+2) && col == scol) { //start and in reach
+                            if (!board.taken(pos)) {
+                                move = new ChessMove(myPosition, pos, getPieceType());
+                                moves.add(move);
+                            }
                         }
                         else if (row == srow+1 && col == scol) {
-                            move = new ChessMove(myPosition, pos, getPieceType());
-                            moves.add(move);
+                            if (!board.taken(pos)) {
+                                move = new ChessMove(myPosition, pos, getPieceType());
+                                moves.add(move);
+                            }
                         }
                     }
                     else {
                         //check capture condition
-                        if (srow == 6 && (row == srow - 1 || row == srow - 2) && col == scol) { //start and in reach
-                            move = new ChessMove(myPosition, pos, getPieceType());
-                            moves.add(move);
+                        if (row == srow-1 && (col == scol-1 || col == scol+1)) { //check capture
+                            if (board.taken(pos) && board.getPiece(pos).getTeamColor() != tColor) {
+                                move = new ChessMove(myPosition, pos, getPieceType());
+                                moves.add(move);
+                            }
+                        }
+                        else if (srow == 6 && (row == srow - 1 || row == srow - 2) && col == scol) { //start and in reach
+                            tempPos = new ChessPosition(srow-1, scol); //issues here
+                            if (row == srow-2 && !board.taken(pos)) { //issues here
+                                if (!board.taken(tempPos)) {
+                                    move = new ChessMove(myPosition, pos, getPieceType());
+                                    moves.add(move);
+                                }
+                            }
+                            else if (!board.taken(pos)) {
+                                move = new ChessMove(myPosition, pos, getPieceType());
+                                moves.add(move);
+                            }
                         } else if (row == srow-1 && col == scol) {
-                            move = new ChessMove(myPosition, pos, getPieceType());
-                            moves.add(move);
+                            if (!board.taken(pos)) {
+                                move = new ChessMove(myPosition, pos, getPieceType());
+                                moves.add(move);
+                            }
 
                         }
                     }
                 }
             }
         }
-        if (pType != PieceType.KING && pType != PieceType.KNIGHT) {
+        if (pType != PieceType.KING && pType != PieceType.KNIGHT && pType != PieceType.PAWN) {
             moves = getCaptureBlock(moves, myPosition, board);
         }
         return moves;
@@ -262,7 +290,6 @@ public class ChessPiece {
                             }
                         }
                     }
-                    else if (this.pieceType == PieceType.PAWN) {}
                 }
             }
             return newMoves;
