@@ -80,17 +80,18 @@ public class ChessPiece {
                 pos = new ChessPosition(row+1, col+1);
                 if (pType == PieceType.KING) {
                     //left or right
-                    if ((col == scol+1 || col == scol-1) && row == srow) {
+                    if ((col == scol+1 || col == scol-1) && row == srow && (!board.taken(pos) || board.getPiece(pos).getTeamColor() != tColor)) {
                         move = new ChessMove(myPosition, pos, getPieceType());
                         moves.add(move);
                     }
                     //up or down
-                    else if ((row == srow+1 || row == srow-1) && col == scol) {
+                    else if ((row == srow+1 || row == srow-1) && col == scol && (!board.taken(pos) || board.getPiece(pos).getTeamColor() != tColor)) {
                         move = new ChessMove(myPosition, pos, getPieceType());
                         moves.add(move);
                     }
                     //diagonals
-                    else if ((row == srow+1 && (col == scol+1 || col == scol-1)) || (row == srow-1 && (col == scol+1 || col == scol-1))) {
+                    else if (((row == srow+1 && (col == scol+1 || col == scol-1)) || (row == srow-1 && (col == scol+1 || col == scol-1)))
+                            && (!board.taken(pos) || board.getPiece(pos).getTeamColor() != tColor)) {
                         move = new ChessMove(myPosition, pos, getPieceType());
                         moves.add(move);
                     }
@@ -204,7 +205,9 @@ public class ChessPiece {
                 }
             }
         }
-        moves = getCaptureBlock(moves, myPosition, board);
+        if (pType != PieceType.KING || pType != PieceType.KNIGHT) {
+            moves = getCaptureBlock(moves, myPosition, board);
+        }
         return moves;
     }
 
@@ -224,14 +227,12 @@ public class ChessPiece {
                 for (ChessMove piece2: currMoves) { //iterate over current moves
                     int rowP2 = piece2.getEndPosition().getRow();
                     int colP2 = piece2.getEndPosition().getColumn();
-                    if (this.pieceType == PieceType.KING) {}
+                    if (inMoves(newMoves, piece2.getEndPosition())) { //checks if already in array
+                        continue;
+                    }
                     else if (this.pieceType == PieceType.QUEEN) {}
                     else if (this.pieceType == PieceType.BISHOP) {}
-                    else if (this.pieceType == PieceType.KNIGHT) {}
                     else if (this.pieceType == PieceType.ROOK) {
-                        if (inMoves(newMoves, piece2.getEndPosition())) {
-                            continue;
-                        }
                         if (rowP2 == rowP1) { //check row
                             if ((colP2 >= myPosition.getColumn() && colP2 >= colP1) ||
                                     (colP2 <= myPosition.getColumn() && colP2 <= colP1)) {
