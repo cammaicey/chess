@@ -205,7 +205,7 @@ public class ChessPiece {
                 }
             }
         }
-        if (pType != PieceType.KING || pType != PieceType.KNIGHT) {
+        if (pType != PieceType.KING && pType != PieceType.KNIGHT) {
             moves = getCaptureBlock(moves, myPosition, board);
         }
         return moves;
