@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ChessPiece {
 
     private final ChessGame.TeamColor teamColor;
-    private PieceType pieceType;
+    private final PieceType pieceType;
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.teamColor = pieceColor;
         this.pieceType = type;
@@ -210,13 +210,60 @@ public class ChessPiece {
 
     public ArrayList<ChessMove> getCaptureBlock(ArrayList<ChessMove> currMoves, ChessPosition myPosition, ChessBoard board) {
         ArrayList<ChessMove> newMoves = new ArrayList<>();
+        ArrayList<ChessMove> occupied = new ArrayList<>(); //keep track of pieces in the way
         if (notClearMoves(currMoves, board)) {
-            if (this.pieceType == PieceType.KING) {}
-            else if (this.pieceType == PieceType.QUEEN) {}
-            else if (this.pieceType == PieceType.BISHOP) {}
-            else if (this.pieceType == PieceType.KNIGHT) {}
-            else if (this.pieceType == PieceType.ROOK) {}
-            else if (this.pieceType == PieceType.PAWN) {}
+            for (ChessMove piece: currMoves) { //get pieces that are blockers or enemies
+                if (board.taken(piece.getEndPosition())) { //adds existing pieces to array
+                    occupied.add(piece);
+                }
+            }
+            for (ChessMove piece1: occupied) {
+                ChessGame.TeamColor pColor = board.getPiece(piece1.getEndPosition()).getTeamColor(); //occupied piece color
+                int rowP1 = piece1.getEndPosition().getRow();
+                int colP1 = piece1.getEndPosition().getColumn();
+                for (ChessMove piece2: currMoves) { //iterate over current moves
+                    int rowP2 = piece2.getEndPosition().getRow();
+                    int colP2 = piece2.getEndPosition().getColumn();
+                    if (this.pieceType == PieceType.KING) {}
+                    else if (this.pieceType == PieceType.QUEEN) {}
+                    else if (this.pieceType == PieceType.BISHOP) {}
+                    else if (this.pieceType == PieceType.KNIGHT) {}
+                    else if (this.pieceType == PieceType.ROOK) {
+                        if (inMoves(newMoves, piece2.getEndPosition())) {
+                            continue;
+                        }
+                        if (rowP2 == rowP1) { //check row
+                            if ((colP2 >= myPosition.getColumn() && colP2 >= colP1) ||
+                                    (colP2 <= myPosition.getColumn() && colP2 <= colP1)) {
+                                if ( board.getPiece(piece2.getEndPosition()) == null || (board.getPiece(piece2.getEndPosition()).getTeamColor() == this.teamColor)) { //same don't add
+                                    continue;
+                                }
+                                else { //capturable
+                                    newMoves.add(piece2);
+                                }
+                            }
+                            else {
+                                newMoves.add(piece2);
+                            }
+                        }
+                        else if (colP2 == colP1) {
+                            if ((rowP2 >= myPosition.getRow() && rowP2 >= rowP1) ||
+                                    (rowP2 <= myPosition.getRow() && rowP2 <= rowP1)) {
+                                if ( board.getPiece(piece2.getEndPosition()) == null || (board.getPiece(piece2.getEndPosition()).getTeamColor() == this.teamColor)) { //same don't add
+                                    continue;
+                                }
+                                else { //capturable
+                                    newMoves.add(piece2);
+                                }
+                            }
+                            else {
+                                newMoves.add(piece2);
+                            }
+                        }
+                    }
+                    else if (this.pieceType == PieceType.PAWN) {}
+                }
+            }
             return newMoves;
         }
         else {
@@ -227,6 +274,15 @@ public class ChessPiece {
     public boolean notClearMoves(ArrayList<ChessMove> currMoves, ChessBoard board) {
         for (ChessMove move : currMoves) {
             if (board.taken(move.getEndPosition())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean inMoves(ArrayList<ChessMove> currMoves, ChessPosition piece) {
+        for (ChessMove move : currMoves) {
+            if (move.getEndPosition().getRow() == piece.getRow() && move.getEndPosition().getColumn() == piece.getColumn()) {
                 return true;
             }
         }
