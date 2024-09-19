@@ -211,7 +211,7 @@ public class ChessPiece {
                             }
                         }
                         else if (srow == 6 && (row == srow - 1 || row == srow - 2) && col == scol) { //start and in reach
-                            tempPos = new ChessPosition(srow-1, scol); //issues here
+                            tempPos = new ChessPosition(srow, scol+1); //issues here
                             if (row == srow-2 && !board.taken(pos)) { //issues here
                                 if (!board.taken(tempPos)) {
                                     move = new ChessMove(myPosition, pos, getPieceType());
