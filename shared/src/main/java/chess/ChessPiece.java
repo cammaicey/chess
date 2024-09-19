@@ -211,8 +211,8 @@ public class ChessPiece {
                             }
                         }
                         else if (srow == 6 && (row == srow - 1 || row == srow - 2) && col == scol) { //start and in reach
-                            tempPos = new ChessPosition(srow, scol+1); //issues here
-                            if (row == srow-2 && !board.taken(pos)) { //issues here
+                            tempPos = new ChessPosition(srow, scol+1);
+                            if (row == srow-2 && !board.taken(pos)) {
                                 if (!board.taken(tempPos)) {
                                     move = new ChessMove(myPosition, pos, getPieceType());
                                     moves.add(move);
@@ -242,7 +242,7 @@ public class ChessPiece {
     public ArrayList<ChessMove> getCaptureBlock(ArrayList<ChessMove> currMoves, ChessPosition myPosition, ChessBoard board) {
         ArrayList<ChessMove> newMoves = new ArrayList<>();
         ArrayList<ChessMove> occupied = new ArrayList<>(); //keep track of pieces in the way
-        if (notClearMoves(currMoves, board)) {
+        if (notClearMoves(currMoves, board)) { //
             for (ChessMove piece: currMoves) { //get pieces that are blockers or enemies
                 if (board.taken(piece.getEndPosition())) { //adds existing pieces to array
                     occupied.add(piece);
@@ -259,7 +259,31 @@ public class ChessPiece {
                         continue;
                     }
                     else if (this.pieceType == PieceType.QUEEN) {}
-                    else if (this.pieceType == PieceType.BISHOP) {}
+                    else if (this.pieceType == PieceType.BISHOP) {
+                        if (rowP2 == rowP1 && colP2 == colP1 && board.getPiece(piece2.getEndPosition()).getTeamColor() != this.teamColor) { //it is the piece
+                            newMoves.add(piece2);
+                        }
+                        //check up and diagonal
+                        else if (rowP2 > rowP1) {
+                            if (colP2 > colP1 && colP2 > myPosition.getColumn()) {
+                                continue;
+                            }
+                            else if (colP2 < colP1 && colP2 < myPosition.getColumn()) {
+                                continue;
+                            }
+                            newMoves.add(piece2);
+                        }
+                        //check down and diagonal
+                        else if (rowP2 < rowP1) {
+                            if (colP2 > colP1 && colP2 > myPosition.getColumn()) {
+                                continue;
+                            }
+                            else if (colP2 < colP1 && colP2 < myPosition.getColumn()) {
+                                continue;
+                            }
+                            newMoves.add(piece2);
+                        }
+                    }
                     else if (this.pieceType == PieceType.ROOK) {
                         if (rowP2 == rowP1) { //check row
                             if ((colP2 >= myPosition.getColumn() && colP2 >= colP1) ||
