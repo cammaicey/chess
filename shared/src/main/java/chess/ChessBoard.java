@@ -3,8 +3,7 @@ package chess;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static chess.ChessGame.TeamColor.BLACK;
-import static chess.ChessGame.TeamColor.WHITE;
+import static chess.ChessGame.TeamColor.*;
 import static chess.ChessPiece.PieceType.*;
 
 
@@ -40,7 +39,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn()-1] = piece;
+        board[position.getRow()-1][position.getColumn()-1] = piece; //adds piece to that spot on the board
     }
 
     /**
@@ -51,12 +50,12 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()-1][position.getColumn()-1];
+        return board[position.getRow()-1][position.getColumn()-1]; //returns piece at that position on the board
     }
 
-    public boolean taken(ChessPosition position) {
-        if (getPiece(position) == null) return false;
-        else return true;
+    public boolean taken(ChessPosition position) { //my own function
+        if (getPiece(position) == null) return false; //if there is not a piece there it is not taken
+        else return true; //it is taken
     }
 
     /**
@@ -64,15 +63,15 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        for (int i = 2; i < 6; i++) {
-            for (int j = 0; j < 8; j++) {
-                board[i][j] = null;
+        for (int row = 2; row < 6; row++) { //iterates over rows
+            for (int col = 0; col < 8; col++) { //iterates over columns
+                board[row][col] = null; //adds empty space
             }
         }
 
-        for (int i = 0; i < 8; i++) {
-            board[1][i] = new ChessPiece(WHITE, PAWN);
-            board[6][i] = new ChessPiece(BLACK, PAWN);
+        for (int col = 0; col < 8; col++) { //iterates over columns adds new chess piece for pawns
+            board[1][col] = new ChessPiece(WHITE, PAWN);
+            board[6][col] = new ChessPiece(BLACK, PAWN);
         }
 
         board[0][0] = new ChessPiece(WHITE, ROOK);
