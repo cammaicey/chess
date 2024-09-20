@@ -169,8 +169,8 @@ public class ChessPiece {
                     }
                 }
                 else if (pType == PieceType.ROOK) {
-                    if (col == scol || row == srow) {
-                        if (col == scol && row == srow) {
+                    if (col == scol || row == srow) { //can only be in one of these
+                        if (col == scol && row == srow) { //it is the piece
                             continue;
                         }
                         else {
@@ -249,7 +249,6 @@ public class ChessPiece {
                 }
             }
             for (ChessMove piece1: occupied) {
-                ChessGame.TeamColor pColor = board.getPiece(piece1.getEndPosition()).getTeamColor(); //occupied piece color
                 int rowP1 = piece1.getEndPosition().getRow();
                 int colP1 = piece1.getEndPosition().getColumn();
                 for (ChessMove piece2: currMoves) { //iterate over current moves
@@ -258,27 +257,91 @@ public class ChessPiece {
                     if (inMoves(newMoves, piece2.getEndPosition())) { //checks if already in array
                         continue;
                     }
-                    else if (this.pieceType == PieceType.QUEEN) {}
-                    else if (this.pieceType == PieceType.BISHOP) {
-                        if (rowP2 == rowP1 && colP2 == colP1 && board.getPiece(piece2.getEndPosition()).getTeamColor() != this.teamColor) { //it is the piece
+                    else if (this.pieceType == PieceType.QUEEN) {
+                        if (rowP2 == rowP1) { //check row
+                            if ((colP2 >= myPosition.getColumn() && colP2 >= colP1) ||
+                                    (colP2 <= myPosition.getColumn() && colP2 <= colP1)) {
+                                if ( board.getPiece(piece2.getEndPosition()) == null || (board.getPiece(piece2.getEndPosition()).getTeamColor() == this.teamColor)) { //same don't add
+                                    continue;
+                                }
+                                else { //capturable
+                                    newMoves.add(piece2);
+                                }
+                            }
+                            else {
+                                newMoves.add(piece2);
+                            }
+                        }
+                        else if (colP2 == colP1) {
+                            if ((rowP2 >= myPosition.getRow() && rowP2 >= rowP1) ||
+                                    (rowP2 <= myPosition.getRow() && rowP2 <= rowP1)) {
+                                if ( board.getPiece(piece2.getEndPosition()) == null || (board.getPiece(piece2.getEndPosition()).getTeamColor() == this.teamColor)) { //same don't add
+                                    continue;
+                                }
+                                else { //capturable
+                                    newMoves.add(piece2);
+                                }
+                            }
+                            else {
+                                newMoves.add(piece2);
+                            }
+                        }
+                        else if (rowP2 == rowP1 && colP2 == colP1 && board.getPiece(piece2.getEndPosition()).getTeamColor() != this.teamColor) { //it is the piece
                             newMoves.add(piece2);
                         }
                         //check up and diagonal
                         else if (rowP2 > rowP1) {
-                            if (colP2 > colP1 && colP2 > myPosition.getColumn()) {
-                                continue;
-                            }
-                            else if (colP2 < colP1 && colP2 < myPosition.getColumn()) {
+                            if (colP2 >= colP1 && colP2 > myPosition.getColumn() || colP2 <= colP1 && colP2 < myPosition.getColumn()) {
+                                if (colP2 == colP1) {
+                                    if ((colP2 == 1 || colP2 == 8) && board.getPiece(piece2.getEndPosition()) == null) {
+                                        newMoves.add(piece2);
+                                    }
+                                    continue;
+                                }
                                 continue;
                             }
                             newMoves.add(piece2);
                         }
                         //check down and diagonal
                         else if (rowP2 < rowP1) {
-                            if (colP2 > colP1 && colP2 > myPosition.getColumn()) {
+                            if (colP2 >= colP1 && colP2 > myPosition.getColumn() || colP2 <= colP1 && colP2 < myPosition.getColumn()) {
+                                if (colP2 == colP1) {
+                                    if ((colP2 == 1 || colP2 == 8) && board.getPiece(piece2.getEndPosition()) == null) {
+                                        newMoves.add(piece2);
+                                    }
+                                    continue;
+                                }
                                 continue;
                             }
-                            else if (colP2 < colP1 && colP2 < myPosition.getColumn()) {
+                            newMoves.add(piece2);
+                        }
+                    }
+                    else if (this.pieceType == PieceType.BISHOP) {
+                        if (rowP2 == rowP1 && colP2 == colP1 && board.getPiece(piece2.getEndPosition()).getTeamColor() != this.teamColor) { //it is the piece
+                            newMoves.add(piece2);
+                        }
+                        //check up and diagonal
+                        else if (rowP2 > rowP1) {
+                            if (colP2 >= colP1 && colP2 > myPosition.getColumn() || colP2 <= colP1 && colP2 < myPosition.getColumn()) {
+                                if (colP2 == colP1) {
+                                    if ((colP2 == 1 || colP2 == 8) && board.getPiece(piece2.getEndPosition()) == null) {
+                                        newMoves.add(piece2);
+                                    }
+                                    continue;
+                                }
+                                continue;
+                            }
+                            newMoves.add(piece2);
+                        }
+                        //check down and diagonal
+                        else if (rowP2 < rowP1) {
+                            if (colP2 >= colP1 && colP2 > myPosition.getColumn() || colP2 <= colP1 && colP2 < myPosition.getColumn()) {
+                                if (colP2 == colP1) {
+                                    if ((colP2 == 1 || colP2 == 8) && board.getPiece(piece2.getEndPosition()) == null) {
+                                        newMoves.add(piece2);
+                                    }
+                                    continue;
+                                }
                                 continue;
                             }
                             newMoves.add(piece2);
