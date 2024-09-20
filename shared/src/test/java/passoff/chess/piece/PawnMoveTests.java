@@ -14,7 +14,7 @@ public class PawnMoveTests {
 
     @Test
     public void pawnMiddleOfBoardWhite() {
-        validateMoves("""camrynnh
+        validateMoves("""
                         | | | | | | | | |
                         | | | | | | | | |
                         | | | | | | | | |
