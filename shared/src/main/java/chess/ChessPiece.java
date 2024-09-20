@@ -11,6 +11,18 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return teamColor == that.teamColor && pieceType == that.pieceType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(teamColor, pieceType);
+    }
 
     private final ChessGame.TeamColor teamColor;
     private final PieceType pieceType;
@@ -43,19 +55,6 @@ public class ChessPiece {
      */
     public PieceType getPieceType() {
         return pieceType;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessPiece that = (ChessPiece) o;
-        return teamColor == that.teamColor && pieceType == that.pieceType;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(teamColor, pieceType);
     }
 
     /**
