@@ -71,6 +71,7 @@ public class ChessPiece {
         int srow = myPosition.getRow()-1; //starting row
         int scol = myPosition.getColumn()-1; //starting col
         ChessPosition pos;
+        ChessPosition tempPos;
         ChessMove move;
         ArrayList<ChessMove> moves = new ArrayList<>(); //store valid moves
         for (int col = 0; col < 8; col++) {
@@ -169,8 +170,8 @@ public class ChessPiece {
                     }
                 }
                 else if (pType == PieceType.ROOK) {
-                    if (col == scol || row == srow) { //can only be in one of these
-                        if (col == scol && row == srow) { //it is the piece
+                    if (col == scol || row == srow) {
+                        if (col == scol && row == srow) {
                             continue;
                         }
                         else {
@@ -180,7 +181,6 @@ public class ChessPiece {
                     }
                 }
                 else if (pType == PieceType.PAWN) {
-                    ChessPosition tempPos;
                     if (tColor == ChessGame.TeamColor.WHITE) {
                         //check capture condition
                         if (row == srow+1 && (col == scol-1 || col == scol+1)) { //check capture
@@ -258,62 +258,66 @@ public class ChessPiece {
                         continue;
                     }
                     else if (this.pieceType == PieceType.QUEEN) {
-                        if (rowP2 == rowP1) { //check row
-                            if ((colP2 >= myPosition.getColumn() && colP2 >= colP1) ||
-                                    (colP2 <= myPosition.getColumn() && colP2 <= colP1)) {
-                                if ( board.getPiece(piece2.getEndPosition()) == null || (board.getPiece(piece2.getEndPosition()).getTeamColor() == this.teamColor)) { //same don't add
-                                    continue;
-                                }
-                                else { //capturable
-                                    newMoves.add(piece2);
-                                }
-                            }
-                            else {
+                        if (colP2 != myPosition.getColumn() && rowP2 != myPosition.getRow()) {
+                            if (rowP2 == rowP1 && colP2 == colP1 && board.getPiece(piece2.getEndPosition()).getTeamColor() != this.teamColor) { //it is the piece
                                 newMoves.add(piece2);
                             }
-                        }
-                        else if (colP2 == colP1) {
-                            if ((rowP2 >= myPosition.getRow() && rowP2 >= rowP1) ||
-                                    (rowP2 <= myPosition.getRow() && rowP2 <= rowP1)) {
-                                if ( board.getPiece(piece2.getEndPosition()) == null || (board.getPiece(piece2.getEndPosition()).getTeamColor() == this.teamColor)) { //same don't add
-                                    continue;
-                                }
-                                else { //capturable
-                                    newMoves.add(piece2);
-                                }
-                            }
-                            else {
-                                newMoves.add(piece2);
-                            }
-                        }
-                        else if (rowP2 == rowP1 && colP2 == colP1 && board.getPiece(piece2.getEndPosition()).getTeamColor() != this.teamColor) { //it is the piece
-                            newMoves.add(piece2);
-                        }
-                        //check up and diagonal
-                        else if (rowP2 > rowP1) {
-                            if (colP2 >= colP1 && colP2 > myPosition.getColumn() || colP2 <= colP1 && colP2 < myPosition.getColumn()) {
-                                if (colP2 == colP1) {
-                                    if ((colP2 == 1 || colP2 == 8) && board.getPiece(piece2.getEndPosition()) == null) {
-                                        newMoves.add(piece2);
+                            //check up and diagonal
+                            else if (rowP2 > rowP1) {
+                                if (colP2 >= colP1 && colP2 > myPosition.getColumn() || colP2 <= colP1 && colP2 < myPosition.getColumn()) {
+                                    if (colP2 == colP1) {
+                                        if ((colP2 == 1 || colP2 == 8) && board.getPiece(piece2.getEndPosition()) == null) {
+                                            newMoves.add(piece2);
+                                        }
+                                        continue;
                                     }
                                     continue;
                                 }
-                                continue;
+                                newMoves.add(piece2);
                             }
-                            newMoves.add(piece2);
-                        }
-                        //check down and diagonal
-                        else if (rowP2 < rowP1) {
-                            if (colP2 >= colP1 && colP2 > myPosition.getColumn() || colP2 <= colP1 && colP2 < myPosition.getColumn()) {
-                                if (colP2 == colP1) {
-                                    if ((colP2 == 1 || colP2 == 8) && board.getPiece(piece2.getEndPosition()) == null) {
-                                        newMoves.add(piece2);
+                            //check down and diagonal
+                            else if (rowP2 < rowP1) {
+                                if (colP2 >= colP1 && colP2 > myPosition.getColumn() || colP2 <= colP1 && colP2 < myPosition.getColumn()) {
+                                    if (colP2 == colP1) {
+                                        if ((colP2 == 1 || colP2 == 8) && board.getPiece(piece2.getEndPosition()) == null) {
+                                            newMoves.add(piece2);
+                                        }
+                                        continue;
                                     }
                                     continue;
                                 }
-                                continue;
+                                newMoves.add(piece2);
                             }
-                            newMoves.add(piece2);
+                        }
+                        else {
+                            if (rowP2 == rowP1) { //check row
+                                if ((colP2 >= myPosition.getColumn() && colP2 >= colP1) ||
+                                        (colP2 <= myPosition.getColumn() && colP2 <= colP1)) {
+                                    if ( board.getPiece(piece2.getEndPosition()) == null || (board.getPiece(piece2.getEndPosition()).getTeamColor() == this.teamColor)) { //same don't add
+                                        continue;
+                                    }
+                                    else { //capturable
+                                        newMoves.add(piece2);
+                                    }
+                                }
+                                else {
+                                    newMoves.add(piece2);
+                                }
+                            }
+                            else if (colP2 == colP1) {
+                                if ((rowP2 >= myPosition.getRow() && rowP2 >= rowP1) ||
+                                        (rowP2 <= myPosition.getRow() && rowP2 <= rowP1)) {
+                                    if ( board.getPiece(piece2.getEndPosition()) == null || (board.getPiece(piece2.getEndPosition()).getTeamColor() == this.teamColor)) { //same don't add
+                                        continue;
+                                    }
+                                    else { //capturable
+                                        newMoves.add(piece2);
+                                    }
+                                }
+                                else {
+                                    newMoves.add(piece2);
+                                }
+                            }
                         }
                     }
                     else if (this.pieceType == PieceType.BISHOP) {
