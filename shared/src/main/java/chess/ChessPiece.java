@@ -269,11 +269,11 @@ public class ChessPiece {
                                         if ((colP2 == 1 || colP2 == 8) && board.getPiece(piece2.getEndPosition()) == null) {
                                             newMoves.add(piece2);
                                         }
-                                        continue;
                                     }
-                                    continue;
                                 }
-                                newMoves.add(piece2);
+                                else if (!board.taken(piece2.getEndPosition()) || board.getPiece(piece2.getEndPosition()).getTeamColor() != this.teamColor) {
+                                    newMoves.add(piece2);
+                                }
                             }
                             //check down and diagonal
                             else if (rowP2 < rowP1) {
