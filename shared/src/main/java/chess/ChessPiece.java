@@ -187,8 +187,20 @@ public class ChessPiece {
                         //check capture condition
                         if (row == srow+1 && (col == scol-1 || col == scol+1)) { //check capture
                             if (board.taken(pos) && board.getPiece(pos).getTeamColor() != tColor) {
-                                move = new ChessMove(myPosition, pos, null);
-                                moves.add(move);
+                                if (row == 7) {
+                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
+                                    moves.add(move);
+                                }
+                                else {
+                                    move = new ChessMove(myPosition, pos, null);
+                                    moves.add(move);
+                                }
                             }
                         }
                         else if (srow == 1 && (row == srow+1 || row == srow+2) && col == scol) { //start and in reach
@@ -199,8 +211,20 @@ public class ChessPiece {
                         }
                         else if (row == srow+1 && col == scol) {
                             if (!board.taken(pos)) {
-                                move = new ChessMove(myPosition, pos, null);
-                                moves.add(move);
+                                if (row == 7) {
+                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
+                                    moves.add(move);
+                                }
+                                else {
+                                    move = new ChessMove(myPosition, pos, null);
+                                    moves.add(move);
+                                }
                             }
                         }
                     }
@@ -208,8 +232,20 @@ public class ChessPiece {
                         //check capture condition
                         if (row == srow-1 && (col == scol-1 || col == scol+1)) { //check capture
                             if (board.taken(pos) && board.getPiece(pos).getTeamColor() != tColor) {
-                                move = new ChessMove(myPosition, pos, null);
-                                moves.add(move);
+                                if (row == 0) {
+                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
+                                    moves.add(move);
+                                }
+                                else {
+                                    move = new ChessMove(myPosition, pos, null);
+                                    moves.add(move);
+                                }
                             }
                         }
                         else if (srow == 6 && (row == srow - 1 || row == srow - 2) && col == scol) { //start and in reach
@@ -227,8 +263,20 @@ public class ChessPiece {
                         }
                         else if (row == srow-1 && col == scol) {
                             if (!board.taken(pos)) {
-                                move = new ChessMove(myPosition, pos, null);
-                                moves.add(move);
+                                if (row == 0) {
+                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
+                                    moves.add(move);
+                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
+                                    moves.add(move);
+                                }
+                                else {
+                                    move = new ChessMove(myPosition, pos, null);
+                                    moves.add(move);
+                                }
                             }
 
                         }
