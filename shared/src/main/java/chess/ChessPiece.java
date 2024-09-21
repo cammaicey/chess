@@ -75,21 +75,16 @@ public class ChessPiece {
             for (int col = 0; col < 8; col++) { //iterate over the column
                 pos = new ChessPosition(row+1, col+1); //position of possible move
                 if (pieceType == PieceType.KING) {
-                    //left or right
-                    if ((col == scol+1 || col == scol-1)
-                            && row == srow && (!board.taken(pos) || board.getPiece(pos).getTeamColor() != teamColor)) {
-                        move = new ChessMove(myPosition, pos, null);
-                        moves.add(move);
-                    }
-                    //up or down
-                    else if ((row == srow+1 || row == srow-1)
-                            && col == scol && (!board.taken(pos) || board.getPiece(pos).getTeamColor() != teamColor)) {
+                    //left/right or up/down
+                    if ((((col == scol+1 || col == scol-1)
+                            && row == srow) || ((row == srow+1 || row == srow-1)
+                            && col == scol)) && (!board.taken(pos) || board.getPiece(pos).getTeamColor() != teamColor)) {
                         move = new ChessMove(myPosition, pos, null);
                         moves.add(move);
                     }
                     //diagonals
-                    else if (((row == srow+1 && (col == scol+1 || col == scol-1)) ||
-                            (row == srow-1 && (col == scol+1 || col == scol-1)))
+                    else if (((row == srow+1 && (col == scol+1 || col == scol-1)) || //is the diagonal up?
+                            (row == srow-1 && (col == scol+1 || col == scol-1))) //is the diagonal down?
                             && (!board.taken(pos) || board.getPiece(pos).getTeamColor() != teamColor)) {
                         move = new ChessMove(myPosition, pos, null);
                         moves.add(move);
@@ -158,8 +153,8 @@ public class ChessPiece {
                     }
                 }
                 else if (pieceType == PieceType.KNIGHT) {
-                    if (((col == scol+2 || col == scol-2) && (row == srow+1 || row == srow-1)) ||
-                            ((row == srow+2 || row == srow-2) && (col == scol+1 || col == scol-1))) {
+                    if (((col == scol+2 || col == scol-2) && (row == srow+1 || row == srow-1)) || //spot is on the left or right
+                            ((row == srow+2 || row == srow-2) && (col == scol+1 || col == scol-1))) { //spot is up or down
                         if (board.taken(pos) && board.getPiece(pos).getTeamColor() == teamColor) { //team piece is already there
                             continue;
                         }
@@ -178,99 +173,95 @@ public class ChessPiece {
                 else if (pieceType == PieceType.PAWN) {
                     if (teamColor == ChessGame.TeamColor.WHITE) {
                         //check capture condition
-                        if (row == srow+1 && (col == scol-1 || col == scol+1)) { //check capture
-                            if (board.taken(pos) && board.getPiece(pos).getTeamColor() != teamColor) {
-                                if (row == 7) {
-                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
-                                    moves.add(move);
-                                }
-                                else {
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
-                                }
+                        if (row == srow+1 && (col == scol-1 || col == scol+1) && board.taken(pos) && board.getPiece(pos).getTeamColor() != teamColor) { //is it a diagonal, spot taken, and enemy
+                            if (row == 7) { //we reached the edge
+                                move = new ChessMove(myPosition, pos, PieceType.BISHOP);
+                                moves.add(move);
+                                move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
+                                moves.add(move);
+                                move = new ChessMove(myPosition, pos, PieceType.ROOK);
+                                moves.add(move);
+                                move = new ChessMove(myPosition, pos, PieceType.QUEEN);
+                                moves.add(move);
                             }
-                        }
-                        else if (srow == 1 && (row == srow+1 || row == srow+2) && col == scol) { //start and in reach
-                            if (!board.taken(pos)) {
+                            else { //add normal piece
                                 move = new ChessMove(myPosition, pos, null);
                                 moves.add(move);
                             }
                         }
-                        else if (row == srow+1 && col == scol) {
-                            if (!board.taken(pos)) {
-                                if (row == 7) {
-                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
-                                    moves.add(move);
-                                }
-                                else {
+                        else if (col == scol) { //pawn can only move forward
+                            if (srow == 1 && row == srow+2) { //initial move aka can move twice
+                                if (!board.taken(pos)) {
                                     move = new ChessMove(myPosition, pos, null);
                                     moves.add(move);
+                                }
+                            }
+                            else if (row == srow+1) { //not in start
+                                if (!board.taken(pos)) { //can move here
+                                    if (row == 7) { //reached the end
+                                        move = new ChessMove(myPosition, pos, PieceType.BISHOP);
+                                        moves.add(move);
+                                        move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
+                                        moves.add(move);
+                                        move = new ChessMove(myPosition, pos, PieceType.ROOK);
+                                        moves.add(move);
+                                        move = new ChessMove(myPosition, pos, PieceType.QUEEN);
+                                        moves.add(move);
+                                    }
+                                    else { //not at the end yet
+                                        move = new ChessMove(myPosition, pos, null);
+                                        moves.add(move);
+                                    }
                                 }
                             }
                         }
                     }
                     else { //the piece is black
-                        if (row == srow-1 && (col == scol-1 || col == scol+1)) { //check capture
-                            if (board.taken(pos) && board.getPiece(pos).getTeamColor() != teamColor) {
-                                if (row == 0) { //add each case of promotion
-                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
-                                    moves.add(move);
-                                }
-                                else {
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
-                                }
+                        if (row == srow-1 && (col == scol-1 || col == scol+1) && board.taken(pos) && board.getPiece(pos).getTeamColor() != teamColor) { //on a diagonal, spot take, and opposite color
+                            if (row == 0) { //reached the white side
+                                move = new ChessMove(myPosition, pos, PieceType.BISHOP);
+                                moves.add(move);
+                                move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
+                                moves.add(move);
+                                move = new ChessMove(myPosition, pos, PieceType.ROOK);
+                                moves.add(move);
+                                move = new ChessMove(myPosition, pos, PieceType.QUEEN);
+                                moves.add(move);
                             }
-                        }
-                        else if (srow == 6 && (row == srow - 1 || row == srow - 2) && col == scol) { //start and in reach
-                            tempPos = new ChessPosition(srow, scol+1); //keeping track of pos directly in front of pawn
-                            if (row == srow-2 && !board.taken(pos)) { //two spaces and empty
-                                if (!board.taken(tempPos)) { //the position in front of the pawn is empty
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
-                                }
-                            }
-                            else if (!board.taken(pos)) {
+                            else { //not the end so add normal piece
                                 move = new ChessMove(myPosition, pos, null);
                                 moves.add(move);
                             }
                         }
-                        else if (row == srow-1 && col == scol) {
-                            if (!board.taken(pos)) {
-                                if (row == 0) {
-                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
-                                    moves.add(move);
-                                }
-                                else {
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
+                        if (col == scol) { //in the right column
+                            if (srow == 6 && row == srow - 2) { //initial spot aka can move 2 spaces
+                                tempPos = new ChessPosition(srow, scol+1); //keeping track of pos directly in front of pawn
+                                if (!board.taken(pos)) { //empty
+                                    if (!board.taken(tempPos)) { //the position in front of the pawn is empty
+                                        move = new ChessMove(myPosition, pos, null);
+                                        moves.add(move);
+                                    }
                                 }
                             }
+                            else if (row == srow-1) { //just one space
+                                if (!board.taken(pos)) { //nothing here yippee
+                                    if (row == 0) { //it is the edge
+                                        move = new ChessMove(myPosition, pos, PieceType.BISHOP);
+                                        moves.add(move);
+                                        move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
+                                        moves.add(move);
+                                        move = new ChessMove(myPosition, pos, PieceType.ROOK);
+                                        moves.add(move);
+                                        move = new ChessMove(myPosition, pos, PieceType.QUEEN);
+                                        moves.add(move);
+                                    }
+                                    else {
+                                        move = new ChessMove(myPosition, pos, null);
+                                        moves.add(move);
+                                    }
+                                }
 
+                            }
                         }
                     }
                 }
