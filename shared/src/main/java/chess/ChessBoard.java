@@ -53,11 +53,6 @@ public class ChessBoard {
         return board[position.getRow()-1][position.getColumn()-1]; //returns piece at that position on the board
     }
 
-    public boolean taken(ChessPosition position) { //my own function
-        if (getPiece(position) == null) return false; //if there is not a piece there it is not taken
-        else return true; //it is taken
-    }
-
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
