@@ -24,11 +24,11 @@ public class ChessGame {
         return Objects.hash(board, teamTurn);
     }
 
-    ChessBoard board = new ChessBoard();
-    TeamColor teamTurn;
+    private ChessBoard board;
+    private TeamColor teamTurn;
 
     public ChessGame() {
-
+        board = new ChessBoard();
     }
 
     /**
@@ -119,7 +119,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        board.resetBoard();
+        this.board = board;
     }
 
     /**
