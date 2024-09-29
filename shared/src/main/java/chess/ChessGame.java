@@ -65,16 +65,30 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = getBoard().getPiece(startPosition);
+        Collection<ChessMove> moves = new ArrayList<>();
         if (piece == null) {
             return null;
         }
         else {
-            Collection<ChessMove> currPieceMoves = piece.pieceMoves(getBoard(), startPosition); //current pieces "valid" moves
-            //find the king
-            //check if king is in check
-            //if not return currPieceMoves
+            Collection<ChessMove> pieceMoves = piece.pieceMoves(getBoard(), startPosition); //current pieces "valid" moves
+            for (int row = 0; row < 8; row++) { //this is to find the king
+                for (int col = 0; col < 8; col++) {
+                    ChessPosition position = new ChessPosition(row, col); //tracking position
+                    ChessPiece currPiece = getBoard().getPiece(position); //current position piece
+                    if (currPiece != null && //there is a piece here
+                            currPiece.getPieceType() == ChessPiece.PieceType.KING && //it is a king
+                            currPiece.getTeamColor() == getTeamTurn()) { //it is the same team
+                        if (!isInCheck(getTeamTurn())) { //king is not in check
+                            return pieceMoves;
+                        }
+                        else { //king is in check
+                            return null;
+                        }
+                    }
+                }
+            }
             //else see if there are any moves that would save the king
-            return currPieceMoves; //change later
+            return moves; //change later
         }
     }
 
