@@ -29,6 +29,7 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
+        setTeamTurn(TeamColor.WHITE);
     }
 
     /**
@@ -68,7 +69,12 @@ public class ChessGame {
             return null;
         }
         else {
-            return piece.pieceMoves(getBoard(), startPosition);
+            Collection<ChessMove> currPieceMoves = piece.pieceMoves(getBoard(), startPosition); //current pieces "valid" moves
+            //find the king
+            //check if king is in check
+            //if not return currPieceMoves
+            //else see if there are any moves that would save the king
+            return currPieceMoves; //change later
         }
     }
 
