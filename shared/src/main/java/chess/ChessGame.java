@@ -66,29 +66,17 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = getBoard().getPiece(startPosition);
         Collection<ChessMove> moves = new ArrayList<>();
-        if (piece == null) {
+        if (piece == null) { //there isn't a piece here
             return null;
         }
-        else {
+        else { //there is a piece
             Collection<ChessMove> pieceMoves = piece.pieceMoves(getBoard(), startPosition); //current pieces "valid" moves
-            for (int row = 0; row < 8; row++) { //this is to find the king
-                for (int col = 0; col < 8; col++) {
-                    ChessPosition position = new ChessPosition(row, col); //tracking position
-                    ChessPiece currPiece = getBoard().getPiece(position); //current position piece
-                    if (currPiece != null && //there is a piece here
-                            currPiece.getPieceType() == ChessPiece.PieceType.KING && //it is a king
-                            currPiece.getTeamColor() == getTeamTurn()) { //it is the same team
-                        if (!isInCheck(getTeamTurn())) { //king is not in check
-                            return pieceMoves;
-                        }
-                        else { //king is in check
-                            return null;
-                        }
-                    }
-                }
+            if (!isInCheck(getTeamTurn())) { //the king is not in check
+                return pieceMoves; //so we can make any move
             }
-            //else see if there are any moves that would save the king
-            return moves; //change later
+            else { //the king is in check
+                return moves;
+            }
         }
     }
 
@@ -109,7 +97,40 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition king = getKingPos(teamColor); //king's pos
+        ChessPosition pos;
+        ChessPiece piece;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                pos = new ChessPosition(row, col); //current position
+                piece = getBoard().getPiece(pos); //current piece
+                if (piece != null && piece.getTeamColor() != teamColor) { //enemy
+                    for (ChessMove move : piece.pieceMoves(getBoard(), pos)) { //go through the piece's moves
+                        if (move.equals(king)) { //the king is in the list
+                            return true; //this is check
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public ChessPosition getKingPos(TeamColor teamColor) {
+        ChessPosition pos;
+        ChessPiece piece;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                pos = new ChessPosition(row, col); //current position
+                piece = getBoard().getPiece(pos); //current piece
+                if (piece != null && //piece is there
+                        piece.getTeamColor() == teamColor && //same team
+                        piece.getPieceType() == ChessPiece.PieceType.KING) { //it is a king
+                    return pos;
+                }
+            }
+        }
+        return null;
     }
 
     /**
