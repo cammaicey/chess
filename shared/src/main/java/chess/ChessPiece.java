@@ -122,7 +122,14 @@ public class ChessPiece {
                     int tcol = col;
                     if (row != srow && col != scol) {
                         while (tcol < 8 && trow < 8 && tcol > -1 && trow > -1) {
-                            if (trow == srow && tcol == scol) {
+                            tempPos = new ChessPosition(trow+1, tcol+1);
+                            if (board.getPiece(tempPos) != null && //piece here
+                                    (trow != srow && tcol != scol) && //it is not start
+                                    (trow != row && tcol != col)) { //it is not this position
+                                break;
+                            }
+                            else if (trow == srow && tcol == scol && //we reached the start
+                                    (board.getPiece(pos) == null || board.getPiece(pos).getTeamColor() != teamColor)) {
                                 move = new ChessMove(myPosition, pos, null);
                                 moves.add(move);
                                 break;
@@ -247,7 +254,7 @@ public class ChessPiece {
                 }
             }
         }
-        if (pieceType != PieceType.KING && pieceType != PieceType.KNIGHT && pieceType != PieceType.PAWN) {
+        if (pieceType != PieceType.KING && pieceType != PieceType.KNIGHT && pieceType != PieceType.PAWN && pieceType != PieceType.BISHOP) {
             moves = validMoves(board, myPosition, moves);
         }
         return moves;
@@ -295,28 +302,6 @@ public class ChessPiece {
                                             newMoves.add(piece2);
                                         }
                                     }
-                                }
-                                else {
-                                    newMoves.add(piece2);
-                                }
-                            }
-                        }
-                        else if (pieceType == PieceType.BISHOP) {
-                            if (rowP2 == rowP1 && colP2 == colP1
-                                    && board.getPiece(piece2.getEndPosition()).getTeamColor() != teamColor) {
-                                newMoves.add(piece2);
-                            }
-                            else {
-                                if ((colP2 >= colP1 && colP2 > myPosition.getColumn()) ||
-                                        (colP2 <= colP1 && colP2 < myPosition.getColumn())) {
-                                    if (colP2 == colP1) { //weird edge case
-                                        if (colP2 == 1 || colP2 == 8) {
-                                            if (board.getPiece(piece2.getEndPosition()) == null) {
-                                                newMoves.add(piece2);
-                                            }
-                                        }
-                                    }
-
                                 }
                                 else {
                                     newMoves.add(piece2);
