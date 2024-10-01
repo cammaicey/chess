@@ -31,6 +31,7 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
+        board.resetBoard();
         cloneBoard = clone(board);
         setTeamTurn(TeamColor.WHITE);
     }
