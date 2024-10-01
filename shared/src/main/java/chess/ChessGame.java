@@ -120,7 +120,12 @@ public class ChessGame {
                 throw new InvalidMoveException("King is in danger");
             }
             else {
-                board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+                if (move.getPromotionPiece() != null) {
+                    board.addPiece(move.getEndPosition(), new ChessPiece(getTeamTurn(), move.getPromotionPiece()));
+                }
+                else {
+                    board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+                }
                 board.addPiece(move.getStartPosition(), null);
                 if (getTeamTurn() == TeamColor.BLACK) {
                     setTeamTurn(TeamColor.WHITE);
