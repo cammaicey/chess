@@ -114,18 +114,24 @@ public class ChessGame {
             if the move leaves the team’s king in danger,
             or if it’s not the corresponding team's turn.
          */
-        if (board.getPiece(move.getStartPosition()).getTeamColor() != getTeamTurn()) {
-            throw new InvalidMoveException("Wrong team");
-        }
-        else if (!inValidMoves(move, validMoves(move.getStartPosition()))) { //game over
-            throw new InvalidMoveException("Invalid move");
-        }
-        else if (isInCheck(getTeamTurn())) {
-            throw new InvalidMoveException("King is in danger");
+        if ((board.getPiece(move.getStartPosition()) != null && board.getPiece(move.getStartPosition()).getTeamColor() == getTeamTurn()) &&
+                inValidMoves(move, validMoves(move.getStartPosition()))) {
+            if (isInCheck(getTeamTurn())) {
+                throw new InvalidMoveException("King is in danger");
+            }
+            else {
+                board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+                board.addPiece(move.getStartPosition(), null);
+                if (getTeamTurn() == TeamColor.BLACK) {
+                    setTeamTurn(TeamColor.WHITE);
+                }
+                else {
+                    setTeamTurn(TeamColor.BLACK);
+                }
+            }
         }
         else {
-            board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
-            board.addPiece(move.getStartPosition(), null);
+            throw new InvalidMoveException();
         }
 
     }
