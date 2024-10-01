@@ -31,7 +31,7 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
-        board.resetBoard();
+        cloneBoard = clone(board);
         setTeamTurn(TeamColor.WHITE);
     }
 
@@ -90,13 +90,12 @@ public class ChessGame {
         else { //there is a piece
             Collection<ChessMove> pieceMoves = piece.pieceMoves(getBoard(), startPosition); //current pieces "valid" moves
             for (ChessMove move : pieceMoves) {
-                try {
-                    makeMove(move);
-                } catch (InvalidMoveException e) {
-                    continue;
+                cloneBoard = clone(getBoard());
+                cloneBoard.addPiece(move.getStartPosition(), null); //remove piece
+                cloneBoard.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition())); //moves piece to new location
+                if (!isInCheckmate(getTeamTurn())) {
+                    moves.add(move);
                 }
-                //if the move comes back valid
-                moves.add(move);
             }
             return moves;
 
@@ -115,18 +114,29 @@ public class ChessGame {
             if the move leaves the team’s king in danger,
             or if it’s not the corresponding team's turn.
          */
-        cloneBoard = clone(getBoard());
-        cloneBoard.addPiece(move.getStartPosition(), null); //remove piece
-        cloneBoard.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition())); //moves piece to new location
         if (board.getPiece(move.getStartPosition()).getTeamColor() != getTeamTurn()) {
             throw new InvalidMoveException("Wrong team");
         }
-        else if (isInStalemate(getTeamTurn())) { //game over
-            throw new InvalidMoveException("Cannot make move");
+        else if (!inValidMoves(move, validMoves(move.getStartPosition()))) { //game over
+            throw new InvalidMoveException("Invalid move");
         }
         else if (isInCheck(getTeamTurn())) {
             throw new InvalidMoveException("King is in danger");
         }
+        else {
+            board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+            board.addPiece(move.getStartPosition(), null);
+        }
+
+    }
+
+    public boolean inValidMoves(ChessMove move, Collection<ChessMove> validMoves) {
+        for (ChessMove validMove : validMoves) { //go through what the valid moves are
+            if (move.equals(validMove)) { //this move is valid
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
