@@ -11,6 +11,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -26,10 +27,25 @@ public class ChessGame {
 
     private ChessBoard board;
     private TeamColor teamTurn;
+    private ChessBoard cloneBoard;
 
     public ChessGame() {
         board = new ChessBoard();
-        setTeamTurn(TeamColor.WHITE);
+        setTeamTurn(TeamColor.BLACK);
+    }
+
+    private ChessBoard clone(ChessBoard board) {
+        ChessBoard clone = new ChessBoard();
+        ChessPosition pos;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                pos = new ChessPosition(row+1, col+1);
+                if (board.getPiece(pos) != null) {
+                    clone.addPiece(pos, board.getPiece(pos));
+                }
+            }
+        }
+        return clone;
     }
 
     /**
@@ -71,12 +87,18 @@ public class ChessGame {
         }
         else { //there is a piece
             Collection<ChessMove> pieceMoves = piece.pieceMoves(getBoard(), startPosition); //current pieces "valid" moves
-            if (!isInCheck(getTeamTurn())) { //the king is not in check
-                return pieceMoves; //so we can make any move
+            for (ChessMove move : pieceMoves) {
+                try {
+                    makeMove(move);
+                    //cloneBoard = clone(getBoard());
+                } catch (InvalidMoveException e) {
+                    continue;
+                }
+                //if the move comes back valid
+                moves.add(move);
             }
-            else { //the king is in check
-                return moves;
-            }
+            return moves;
+
         }
     }
 
@@ -87,7 +109,22 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        /*
+            move is illegal if the chess piece cannot move there,
+            if the move leaves the team’s king in danger,
+            or if it’s not the corresponding team's turn.
+         */
+        cloneBoard = clone(getBoard());
+        cloneBoard.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition())); //adds to clone board
+        if (board.getPiece(move.getStartPosition()).getTeamColor() != getTeamTurn()) {
+            throw new InvalidMoveException("Wrong team");
+        }
+        /*else if () {
+            throw new InvalidMoveException("Cannot make move");
+        }*/
+        else if (isInCheck(getTeamTurn())) {
+            throw new InvalidMoveException("King is in danger");
+        }
     }
 
     /**
@@ -102,11 +139,12 @@ public class ChessGame {
         ChessPiece piece;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                pos = new ChessPosition(row, col); //current position
-                piece = getBoard().getPiece(pos); //current piece
+                pos = new ChessPosition(row+1, col+1); //current position
+                piece = cloneBoard.getPiece(pos); //current piece
                 if (piece != null && piece.getTeamColor() != teamColor) { //enemy
-                    for (ChessMove move : piece.pieceMoves(getBoard(), pos)) { //go through the piece's moves
-                        if (move.equals(king)) { //the king is in the list
+                    Collection<ChessMove> moves = piece.pieceMoves(cloneBoard, pos); //calcs new moves after test move
+                    for (ChessMove move : moves) { //go through the piece's moves
+                        if (move.getEndPosition().equals(king)) { //the king is in the list
                             return true; //this is check
                         }
                     }
@@ -121,7 +159,7 @@ public class ChessGame {
         ChessPiece piece;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                pos = new ChessPosition(row, col); //current position
+                pos = new ChessPosition(row+1, col+1); //current position
                 piece = getBoard().getPiece(pos); //current piece
                 if (piece != null && //piece is there
                         piece.getTeamColor() == teamColor && //same team
@@ -140,7 +178,12 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece king = getBoard().getPiece(getKingPos(teamColor)); //the king
+        Collection<ChessMove> kingMoves = king.pieceMoves(getBoard(), getKingPos(teamColor)); //the kings possible moves
+        for (ChessMove move : kingMoves) {
+            return true;
+        }
+        return false;
     }
 
     /**
