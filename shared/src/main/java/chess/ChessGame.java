@@ -31,7 +31,6 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
-        //board.resetBoard();
         cloneBoard = board;
         setTeamTurn(TeamColor.WHITE);
     }
@@ -233,17 +232,21 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         ChessPosition pos;
         ChessPiece piece;
+        int valid = 0;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 pos = new ChessPosition(row+1, col+1); //current position
                 piece = board.getPiece(pos); //current piece
                 if (piece != null && piece.getTeamColor() == teamColor) { //our piece
                     Collection<ChessMove> moves = validMoves(pos); //returns valid moves
-                    if (moves != null && moves.size() == 0) { //no valid moves
-                        return true;
+                    if (moves != null && moves.size() != 0) { //no valid moves
+                        valid++;
                     }
                 }
             }
+        }
+        if (valid == 0) {
+            return true;
         }
         return false;
     }
