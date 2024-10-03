@@ -83,18 +83,18 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = getBoard().getPiece(startPosition);
-        setTeamTurn(piece.getTeamColor());
         Collection<ChessMove> moves = new ArrayList<>();
         if (piece == null) { //there isn't a piece here
             return null;
         }
         else { //there is a piece
+            setTeamTurn(piece.getTeamColor());
             Collection<ChessMove> pieceMoves = piece.pieceMoves(getBoard(), startPosition); //current pieces "valid" moves
             for (ChessMove move : pieceMoves) {
                 cloneBoard = clone(getBoard());
                 cloneBoard.addPiece(move.getStartPosition(), null); //remove piece
                 cloneBoard.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition())); //moves piece to new location
-                if (!isInCheckmate(getTeamTurn())) {
+                if (!isInCheck(getTeamTurn())) {
                     moves.add(move);
                 }
             }
@@ -158,10 +158,12 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        if (cloneBoardNull()) {
+            cloneBoard = clone(getBoard());
+        }
         ChessPosition king = getKingPos(teamColor); //king's pos
         ChessPosition pos;
         ChessPiece piece;
-        //cloneBoard = clone(getBoard());
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 pos = new ChessPosition(row+1, col+1); //current position
@@ -180,7 +182,6 @@ public class ChessGame {
     }
 
     public ChessPosition getKingPos(TeamColor teamColor) {
-        cloneBoard = clone(getBoard());
         ChessPosition pos;
         ChessPiece piece;
         for (int row = 0; row < 8; row++) {
@@ -195,6 +196,18 @@ public class ChessGame {
             }
         }
         return null;
+    }
+
+    public boolean cloneBoardNull() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPosition pos = new ChessPosition(i+1, j+1);
+                if (cloneBoard.getPiece(pos) != null) { //there is a piece
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -218,8 +231,19 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (getTeamTurn() == teamColor && isInCheck(teamColor)) {
-            return true;
+        ChessPosition pos;
+        ChessPiece piece;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                pos = new ChessPosition(row+1, col+1); //current position
+                piece = board.getPiece(pos); //current piece
+                if (piece != null && piece.getTeamColor() == teamColor) { //our piece
+                    Collection<ChessMove> moves = validMoves(pos); //returns valid moves
+                    if (moves != null && moves.size() == 0) { //no valid moves
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
