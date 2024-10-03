@@ -31,8 +31,8 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
-        board.resetBoard();
-        cloneBoard = clone(board);
+        //board.resetBoard();
+        cloneBoard = board;
         setTeamTurn(TeamColor.WHITE);
     }
 
@@ -161,6 +161,7 @@ public class ChessGame {
         ChessPosition king = getKingPos(teamColor); //king's pos
         ChessPosition pos;
         ChessPiece piece;
+        //cloneBoard = clone(getBoard());
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 pos = new ChessPosition(row+1, col+1); //current position
@@ -179,6 +180,7 @@ public class ChessGame {
     }
 
     public ChessPosition getKingPos(TeamColor teamColor) {
+        cloneBoard = clone(getBoard());
         ChessPosition pos;
         ChessPiece piece;
         for (int row = 0; row < 8; row++) {
