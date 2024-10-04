@@ -127,6 +127,7 @@ public class ChessGame {
                     board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
                 }
                 board.addPiece(move.getStartPosition(), null);
+                cloneBoard = clone(getBoard());
                 if (getTeamTurn() == TeamColor.BLACK) {
                     setTeamTurn(TeamColor.WHITE);
                 }
@@ -136,7 +137,7 @@ public class ChessGame {
             }
         }
         else {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("No valid moves");
         }
 
     }
@@ -157,9 +158,6 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        if (cloneBoardStart()) {
-            cloneBoard = clone(getBoard());
-        }
         ChessPosition king = getKingPos(teamColor); //king's pos
         ChessPosition pos;
         ChessPiece piece;
@@ -168,8 +166,7 @@ public class ChessGame {
                 pos = new ChessPosition(row+1, col+1); //current position
                 piece = cloneBoard.getPiece(pos); //current piece
                 if (piece != null && piece.getTeamColor() != teamColor) { //enemy
-                    Collection<ChessMove> moves = piece.pieceMoves(cloneBoard, pos); //calcs new moves after test move
-                    for (ChessMove move : moves) { //go through the piece's moves
+                    for (ChessMove move : piece.pieceMoves(cloneBoard, pos)) { //go through the piece's moves
                         if (move.getEndPosition().equals(king)) { //the king is in the list
                             return true; //this is check
                         }
@@ -181,6 +178,9 @@ public class ChessGame {
     }
 
     public ChessPosition getKingPos(TeamColor teamColor) {
+        if (cloneBoardStart()) {
+            cloneBoard = clone(board);
+        }
         ChessPosition pos;
         ChessPiece piece;
         for (int row = 0; row < 8; row++) {
