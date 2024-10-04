@@ -11,18 +11,17 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
+        return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn && Objects.equals(cloneBoard, chessGame.cloneBoard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, teamTurn);
+        return Objects.hash(board, teamTurn, cloneBoard);
     }
 
     private ChessBoard board;
@@ -31,6 +30,7 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
+        board.resetBoard();
         cloneBoard = board;
         setTeamTurn(TeamColor.WHITE);
     }
@@ -157,7 +157,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        if (cloneBoardNull()) {
+        if (cloneBoardStart()) {
             cloneBoard = clone(getBoard());
         }
         ChessPosition king = getKingPos(teamColor); //king's pos
@@ -197,16 +197,13 @@ public class ChessGame {
         return null;
     }
 
-    public boolean cloneBoardNull() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                ChessPosition pos = new ChessPosition(i+1, j+1);
-                if (cloneBoard.getPiece(pos) != null) { //there is a piece
-                    return false;
-                }
-            }
+    public boolean cloneBoardStart() {
+        ChessBoard tempBoard = new ChessBoard();
+        tempBoard.resetBoard();
+        if (cloneBoard.equals(tempBoard)) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
