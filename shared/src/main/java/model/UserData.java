@@ -1,5 +1,3 @@
 package model;
-import com.google.gson.*;
 
-public class UserData {
-}
+public record UserData(String username, String password, String email) {}
