@@ -1,10 +1,18 @@
 package service;
 
+import dataaccess.DataAccess;
 import model.GameData;
 
 import java.util.Collection;
 
 public class GameService {
+
+    private final DataAccess dataAccess;
+
+    public GameService(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
+    }
+
     public GameData getGame() {
         return null;
     }
