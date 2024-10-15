@@ -1,16 +1,19 @@
 package service;
 
-import dataaccess.DataAccess;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
 import model.GameData;
 
 import java.util.Collection;
 
 public class GameService {
 
-    private final DataAccess dataAccess;
+    private final GameDAO gameDAO;
+    private final AuthDAO authDAO;
 
-    public GameService(DataAccess dataAccess) {
-        this.dataAccess = dataAccess;
+    public GameService(GameDAO gameDAO, AuthDAO authDAO) {
+        this.gameDAO = gameDAO;
+        this.authDAO = authDAO;
     }
 
     public GameData getGame() {
