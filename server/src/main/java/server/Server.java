@@ -1,5 +1,6 @@
 package server;
 
+import exception.ResponseException;
 import service.GameService;
 import service.UserService;
 import spark.*;
@@ -38,5 +39,9 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    private void exceptionHandler(ResponseException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
     }
 }
