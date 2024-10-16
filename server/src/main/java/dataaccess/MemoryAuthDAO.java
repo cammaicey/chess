@@ -12,4 +12,6 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     public void deleteAuth(AuthData authData) {}
+
+    public void deleteAllAuths() {}
 }

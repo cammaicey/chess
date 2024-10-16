@@ -19,5 +19,5 @@ public class MemoryGameDAO implements GameDAO {
 
     public void updateGame(String playerColor, int gameID) {}
 
-    public void deleteGame(GameData gameData) {}
+    public void deleteAllGames() {}
 }
