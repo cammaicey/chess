@@ -2,25 +2,35 @@ package dataaccess;
 
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 
 public class MemoryGameDAO implements GameDAO {
-    final private HashMap<Integer, GameData> games = new HashMap<>();
+    final private HashSet<GameData> games = new HashSet<>();
 
-    public GameData createGame(String gameName) {
-        return null;
+    public void createGame(String gameName) {
+
     }
 
     public GameData getGame(int gameId) {
+        for (GameData game : games) {
+            if (game.gameID() == gameId) {
+                return game;
+            }
+        }
         return null;
     }
 
     public Collection<GameData> listGames() {
-        return null;
+        return games;
     }
 
-    public void updateGame(String playerColor, int gameID) {}
+    public void updateGame(String playerColor, int gameID) {
+        
+    }
 
-    public void deleteAllGames() {}
+    public void deleteAllGames() {
+        games.clear();
+    }
 }
