@@ -2,7 +2,6 @@ package dataaccess;
 
 import model.AuthData;
 import java.util.HashSet;
-import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO {
     final private HashSet<AuthData> auths = new HashSet<>();
@@ -24,11 +23,16 @@ public class MemoryAuthDAO implements AuthDAO {
         for (AuthData auth : auths) {
             if (auth.equals(authData)) {
                 auths.remove(auth);
+                break;
             }
         }
     }
 
     public void deleteAllAuths() {
         auths.clear();
+    }
+
+    public HashSet<AuthData> getAuths() {
+        return auths;
     }
 }
