@@ -16,7 +16,7 @@ public class Main {
         var userService = new UserService(userDAO, authDAO);
         var gameService = new GameService(gameDAO, authDAO);
 
-        Server server = new Server(userService, gameService);
+        Server server = new Server();
         server.run(8080);
     }
 }

@@ -1,18 +1,17 @@
 package server;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import exception.ResponseException;
 import service.GameService;
 import service.UserService;
 import spark.*;
+import spark.route.Routes;
 
 public class Server {
-    private final UserService userService;
-    private final GameService gameService;
-
-    public Server(UserService userService, GameService gameService) {
-        this.userService = userService;
-        this.gameService = gameService;
-    }
+    UserService userService;
+    GameService gameService;
+    AuthDAO authDAO;
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -20,8 +19,8 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        /*
         Spark.delete("/db", this::clearAll);
+        /*
         Spark.post("/user", this::createUser);
         Spark.post("/session", this::loginUser);
         Spark.delete("/session", this::logoutUser);
@@ -43,5 +42,13 @@ public class Server {
 
     private void exceptionHandler(ResponseException ex, Request req, Response res) {
         res.status(ex.StatusCode());
+    }
+
+    public Object clearAll(Request req, Response res) throws ResponseException, DataAccessException {
+        userService.clearUsers();
+        gameService.clearGames();
+        authDAO.deleteAllAuths();
+        res.status(200);
+        return "";
     }
 }
