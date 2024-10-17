@@ -1,7 +1,9 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import exception.ResponseException;
 import model.GameData;
 
 import java.util.Collection;
@@ -16,14 +18,15 @@ public class GameService {
         this.authDAO = authDAO;
     }
 
-    public GameData getGame() {
+    public GameData getGame() throws ResponseException {
         return null;
     }
-    public Collection<GameData> listGames() {
+    public Collection<GameData> listGames() throws ResponseException {
         return java.util.List.of();
     }
-    public void updateGame(GameData game) {}
-    public GameData clear(){
-        return null;
+    public void updateGame(GameData game) throws ResponseException {}
+
+    public void clearGames() throws ResponseException, DataAccessException {
+        gameDAO.deleteAllGames();
     }
 }
