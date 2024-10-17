@@ -13,6 +13,9 @@ public class Server {
     GameService gameService;
     AuthDAO authDAO;
 
+    UserHandler userHandler;
+    GameHandler gameHandler;
+
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -20,8 +23,8 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clearAll);
+        Spark.post("/user", userHandler::register);
         /*
-        Spark.post("/user", this::createUser);
         Spark.post("/session", this::loginUser);
         Spark.delete("/session", this::logoutUser);
         Spark.get("/game", this::listGames);
