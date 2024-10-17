@@ -9,13 +9,6 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        UserDAO userDAO = new MemoryUserDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
-        GameDAO gameDAO = new MemoryGameDAO();
-
-        var userService = new UserService(userDAO, authDAO);
-        var gameService = new GameService(gameDAO, authDAO);
-
         Server server = new Server();
         server.run(8080);
     }
