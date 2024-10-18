@@ -25,12 +25,13 @@ public class Server {
         Spark.delete("/db", this::clearAll);
         Spark.post("/user", userHandler::register);
         /*
-        Spark.post("/session", this::loginUser);
-        Spark.delete("/session", this::logoutUser);
+        Spark.post("/session", userHandler::login);
+        Spark.delete("/session", userHandler::logout);
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
         */
+        Spark.exception(ResponseException.class, this::exceptionHandler);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
