@@ -92,7 +92,7 @@ public class MemoryUserDAOTest {
         expected.add(userThree);
 
         UserData actual = dao.getUser("eledstudent");
-        Assertions.assertEquals(null, actual);
+        Assertions.assertNull(actual);
     }
 
     //test delete all users

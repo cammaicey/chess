@@ -77,7 +77,7 @@ public class MemoryAuthDAOTest {
 
         AuthData actual = dao.getAuth(dneToken);
 
-        Assertions.assertEquals(null, actual);
+        Assertions.assertNull(actual);
     }
 
     //test delete auth
