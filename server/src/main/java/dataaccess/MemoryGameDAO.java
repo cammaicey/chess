@@ -2,15 +2,14 @@ package dataaccess;
 
 import model.GameData;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
 public class MemoryGameDAO implements GameDAO {
     final private HashSet<GameData> games = new HashSet<>();
 
-    public void createGame(String gameName) {
-
+    public void createGame(GameData game) {
+        games.add(game);
     }
 
     public GameData getGame(int gameId) {
