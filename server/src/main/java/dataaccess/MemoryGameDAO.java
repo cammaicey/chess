@@ -25,8 +25,17 @@ public class MemoryGameDAO implements GameDAO {
         return games;
     }
 
-    public void updateGame(String playerColor, int gameID) {
-        
+    public void updateGame(GameData game) {
+        for (GameData g : games) {
+            if (g.gameID() == game.gameID()) {
+                games.remove(g);
+                games.add(game);
+            }
+        }
+    }
+
+    public void deleteGame(GameData game) {
+        games.remove(game);
     }
 
     public void deleteAllGames() {
