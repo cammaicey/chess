@@ -37,9 +37,10 @@ public class UserService {
         authDAO.createAuth(authData);
         return authData;
     }
+
     public AuthData login(UserData user) throws ResponseException, DataAccessException {
-        if (!userDAO.getUser(user.username()).password().equals(user.password()) ||
-                userDAO.getUser(user.username()) == null) {
+        if (userDAO.getUser(user.username()) == null ||
+                !userDAO.getUser(user.username()).password().equals(user.password())) {
             DataAccessException e = new DataAccessException("Error: unauthorized");
             ResponseException r = new ResponseException(401, e.getMessage());
             throw r;
@@ -48,6 +49,7 @@ public class UserService {
         authDAO.createAuth(authData);
         return authData;
     }
+
     public void logout(AuthData auth) throws ResponseException {}
 
     public void clearUsers() throws ResponseException, DataAccessException {

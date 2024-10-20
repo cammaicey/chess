@@ -34,14 +34,15 @@ public class UserHandler {
 
     public Object login(Request req, Response res) throws ResponseException, DataAccessException {
         var user = new Gson().fromJson(req.body(), UserData.class);
-        userService.login(user);
-        /*
-        [200] { "username":"", "authToken":"" }
-        [401] { "message": "Error: unauthorized" }
-        [500] { "message": "Error: (description of error)" }
-         */
+        AuthData authData;
+        try {
+            authData = userService.login(user);
+        } catch (ResponseException e) {
+            res.status(e.StatusCode());
+            return convertExceptionToJson(e);
+        }
         res.status(200);
-        return new Gson().toJson(user);
+        return new Gson().toJson(authData);
     }
 
     public Object logout(Request req, Response res) throws ResponseException {
