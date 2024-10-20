@@ -39,8 +39,8 @@ public class Server {
         Spark.delete("/db", this::clearAll);
         Spark.post("/user", userHandler::register);
         Spark.post("/session", userHandler::login);
-        /*
         Spark.delete("/session", userHandler::logout);
+        /*
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
@@ -67,6 +67,6 @@ public class Server {
         gameService.clearGames();
         authDAO.deleteAllAuths();
         res.status(200);
-        return "";
+        return "{}";
     }
 }
