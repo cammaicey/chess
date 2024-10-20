@@ -45,14 +45,16 @@ public class UserHandler {
         return new Gson().toJson(authData);
     }
 
-    public Object logout(Request req, Response res) throws ResponseException {
-        var user = new Gson().fromJson(req.body(), UserData.class);
-        /*
-        [200] {}
-        [401] { "message": "Error: unauthorized" }
-        [500] { "message": "Error: (description of error)" }
-         */
-        return new Gson().toJson(user);
+    public Object logout(Request req, Response res) throws ResponseException, DataAccessException {
+        String token = req.headers("authorization");
+        try {
+            userService.logout(token);
+        } catch (ResponseException e) {
+            res.status(e.StatusCode());
+            return convertExceptionToJson(e);
+        }
+        res.status(200);
+        return "{}";
     }
 
     public static String convertExceptionToJson(Exception e) {

@@ -50,7 +50,14 @@ public class UserService {
         return authData;
     }
 
-    public void logout(AuthData auth) throws ResponseException {}
+    public void logout(String auth) throws ResponseException, DataAccessException {
+        if (authDAO.getAuth(auth) == null) {
+            DataAccessException e = new DataAccessException("Error: unauthorized");
+            ResponseException r = new ResponseException(401, e.getMessage());
+            throw r;
+        }
+        authDAO.deleteAuth(authDAO.getAuth(auth));
+    }
 
     public void clearUsers() throws ResponseException, DataAccessException {
         userDAO.deleteAllUsers();
