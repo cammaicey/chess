@@ -1,6 +1,5 @@
 package dataaccess;
 
-import chess.ChessGame;
 import model.GameData;
 
 import java.util.Collection;
@@ -18,7 +17,7 @@ public class MemoryGameDAO implements GameDAO {
         while (getGame(id) != null) {
             id = generateRandomNumber(min, max);
         }
-        GameData game = new GameData(id, null, null, gameName, new ChessGame());
+        GameData game = new GameData(id, null, null, gameName);
         games.add(game);
         return id;
     }
