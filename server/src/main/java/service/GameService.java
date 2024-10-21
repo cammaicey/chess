@@ -18,13 +18,30 @@ public class GameService {
         this.authDAO = authDAO;
     }
 
-    public GameData getGame() throws ResponseException {
-        return null;
+    public Collection<GameData> listgames(String auth) throws ResponseException, DataAccessException {
+        if (authDAO.getAuth(auth) == null) {
+            DataAccessException e = new DataAccessException("Error: unauthorized");
+            ResponseException r = new ResponseException(401, e.getMessage());
+            throw r;
+        }
+        return gameDAO.listGames();
     }
-    public Collection<GameData> listGames() throws ResponseException {
-        return java.util.List.of();
+
+    public int creategame(String auth, String gameName) throws ResponseException, DataAccessException {
+        if (authDAO.getAuth(auth) == null) {
+            DataAccessException e = new DataAccessException("Error: unauthorized");
+            ResponseException r = new ResponseException(401, e.getMessage());
+            throw r;
+        }
+        else if (gameName == null) {
+            DataAccessException e = new DataAccessException("Error: bad request");
+            ResponseException r = new ResponseException(400, e.getMessage());
+            throw r;
+        }
+        return gameDAO.createGame(gameName);
     }
-    public void updateGame(GameData game) throws ResponseException {}
+
+    public void joinGame(GameData game) throws ResponseException {}
 
     public void clearGames() throws ResponseException, DataAccessException {
         gameDAO.deleteAllGames();
