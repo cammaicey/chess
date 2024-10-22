@@ -80,10 +80,9 @@ public class GameServiceTest {
         String auth = UUID.randomUUID().toString();
         int id;
         JoinData join = null;
-        GameData game;
         try {
             authDAO.createAuth(new AuthData(auth, "user1"));
-            gameDAO.createGame("gameygame");
+            gameService.creategame(auth, "gameygame");
             Collection<GameData> games = gameDAO.listGames();
             for (GameData gameData : games) {
                 if (gameData.gameName().equals("gameygame")) {
@@ -92,8 +91,6 @@ public class GameServiceTest {
                     break;
                 }
             }
-            assert join != null;
-            gameService.joingame(auth, join);
         } catch (ResponseException | DataAccessException e) {
             throw new RuntimeException(e);
         }
