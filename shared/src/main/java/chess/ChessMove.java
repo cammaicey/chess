@@ -11,8 +11,12 @@ import java.util.Objects;
 public class ChessMove {
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessMove chessMove = (ChessMove) o;
         return Objects.equals(start, chessMove.start) && Objects.equals(end, chessMove.end) && promotion == chessMove.promotion;
     }
@@ -53,7 +57,11 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        if (promotion == null) return null;
-        else return promotion;
+        if (promotion == null) {
+            return null;
+        }
+        else {
+            return promotion;
+        }
     }
 }
