@@ -1,5 +1,7 @@
 package chess;
 
+import jdk.dynalink.Operation;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -111,53 +113,37 @@ public class ChessPiece {
                     rookMoves(row, col, board, myPosition, moves);
                 }
                 else if (pieceType == ChessPiece.PieceType.PAWN) {
-                    if (teamColor == ChessGame.TeamColor.WHITE) {
-                        if ((row == srow+1 && (col == scol+1 || col == scol-1)) //capture
-                                && board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != teamColor) {
-                            if (row == 7) {
-                                move = new ChessMove(myPosition, pos, PieceType.ROOK);
-                                moves.add(move);
-                                move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
-                                moves.add(move);
-                                move = new ChessMove(myPosition, pos, PieceType.BISHOP);
-                                moves.add(move);
-                                move = new ChessMove(myPosition, pos, PieceType.QUEEN);
-                                moves.add(move);
-                            }
-                            else {
-                                move = new ChessMove(myPosition, pos, null);
-                                moves.add(move);
-                            }
+                    if ((row == rowOperation(srow) && (col == scol+1 || col == scol-1)) //capture
+                            && board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != teamColor) {
+                        if ((row == 7 && teamColor == ChessGame.TeamColor.WHITE) ||
+                                (row == 0 && teamColor == ChessGame.TeamColor.BLACK)) {
+                            move = new ChessMove(myPosition, pos, PieceType.ROOK);
+                            moves.add(move);
+                            move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
+                            moves.add(move);
+                            move = new ChessMove(myPosition, pos, PieceType.BISHOP);
+                            moves.add(move);
+                            move = new ChessMove(myPosition, pos, PieceType.QUEEN);
+                            moves.add(move);
                         }
-                        else if (col == scol) {
-                            if (srow == 1 && row == srow+2) {
-                                if (board.getPiece(pos) == null) {
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
-                                }
-                            }
-                            else if (row == srow+1 && board.getPiece(pos) == null) {
-                                if (row == 7) {
-                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
-                                    moves.add(move);
-                                }
-                                else {
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
-                                }
-                            }
+                        else {
+                            move = new ChessMove(myPosition, pos, null);
+                            moves.add(move);
                         }
                     }
-                    else {
-                        if ((row == srow-1 && (col == scol+1 || col == scol-1)) //capture
-                                && board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() != teamColor) {
-                            if (row == 0) {
+                    else if (col == scol) {
+                        if ((srow == 1 && row == srow+2 && teamColor == ChessGame.TeamColor.WHITE) ||
+                                (srow == 6 && row == srow-2 && teamColor == ChessGame.TeamColor.BLACK)) {
+                            tempPos = new ChessPosition(srow, scol+1);
+                            if ((board.getPiece(pos) == null && teamColor == ChessGame.TeamColor.WHITE) ||
+                                    (board.getPiece(tempPos) == null && board.getPiece(pos) == null && teamColor == ChessGame.TeamColor.BLACK)) {
+                                move = new ChessMove(myPosition, pos, null);
+                                moves.add(move);
+                            }
+                        }
+                        else if (row == rowOperation(srow) && board.getPiece(pos) == null) {
+                            if ((row == 7 && teamColor == ChessGame.TeamColor.WHITE) ||
+                                    (row == 0 && teamColor == ChessGame.TeamColor.BLACK)) {
                                 move = new ChessMove(myPosition, pos, PieceType.ROOK);
                                 moves.add(move);
                                 move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
@@ -170,31 +156,6 @@ public class ChessPiece {
                             else {
                                 move = new ChessMove(myPosition, pos, null);
                                 moves.add(move);
-                            }
-                        }
-                        else if (col == scol) {
-                            if (srow == 6 && row == srow-2) {
-                                tempPos = new ChessPosition(srow, scol+1);
-                                if (board.getPiece(tempPos) == null && board.getPiece(pos) == null) {
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
-                                }
-                            }
-                            else if (row == srow-1 && board.getPiece(pos) == null) {
-                                if (row == 0) {
-                                    move = new ChessMove(myPosition, pos, PieceType.ROOK);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.KNIGHT);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.BISHOP);
-                                    moves.add(move);
-                                    move = new ChessMove(myPosition, pos, PieceType.QUEEN);
-                                    moves.add(move);
-                                }
-                                else {
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
-                                }
                             }
                         }
                     }
@@ -271,4 +232,14 @@ public class ChessPiece {
             }
         }
     }
+
+    public int rowOperation(int srow) {
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            return srow+1;
+        }
+        else {
+            return srow-1;
+        }
+    }
+
 }
