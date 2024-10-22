@@ -117,4 +117,18 @@ public class GameServiceTest {
             Assertions.assertThrows(ResponseException.class, () -> gameService.joingame(auth, finalJoin));
         }
     }
+
+    //clear success
+    @Test
+    public void testClearGames() {
+        String auth = UUID.randomUUID().toString();
+        String gameName = "game1";
+        try {
+            authDAO.createAuth(new AuthData(auth, "user1"));
+            gameService.creategame(auth, gameName);
+        } catch (DataAccessException | ResponseException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> gameService.clearGames());
+    }
 }

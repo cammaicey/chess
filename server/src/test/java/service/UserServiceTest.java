@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 public class UserServiceTest {
 
     private UserService userService;
@@ -92,5 +94,19 @@ public class UserServiceTest {
         } catch (ResponseException | DataAccessException e) {
             Assertions.assertThrows(ResponseException.class, () -> userService.logout(authData.authToken()));
         }
+    }
+
+    //clear success
+    @Test
+    public void testClearUser() {
+        UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
+        AuthData auth = new AuthData(UUID.randomUUID().toString(), "csstudent");
+        try {
+            userService.register(user);
+            authDAO.createAuth(auth);
+        } catch (ResponseException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> userService.clearUsers());
     }
 }
