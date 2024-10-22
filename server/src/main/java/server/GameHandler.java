@@ -27,7 +27,7 @@ public class GameHandler {
         try {
            games = gameService.listgames(token);
         } catch (ResponseException e) {
-            res.status(e.StatusCode());
+            res.status(e.statusCode());
             return convertExceptionToJson(e);
         }
         res.status(200);
@@ -56,7 +56,7 @@ public class GameHandler {
         try {
             gameID = gameService.creategame(token, game.gameName());
         } catch (ResponseException e) {
-            res.status(e.StatusCode());
+            res.status(e.statusCode());
             return convertExceptionToJson(e);
         }
         res.status(200);
@@ -71,7 +71,7 @@ public class GameHandler {
         try {
             gameService.joingame(token, join);
         } catch (ResponseException e) {
-            res.status(e.StatusCode());
+            res.status(e.statusCode());
             return convertExceptionToJson(e);
         }
         res.status(200);

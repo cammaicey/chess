@@ -60,7 +60,7 @@ public class Server {
     }
 
     private void exceptionHandler(ResponseException ex, Request req, Response res) {
-        res.status(ex.StatusCode());
+        res.status(ex.statusCode());
     }
 
     public Object clearAll(Request req, Response res) throws ResponseException, DataAccessException {

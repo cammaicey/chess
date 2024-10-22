@@ -25,7 +25,7 @@ public class UserHandler {
         try {
             authData = userService.register(user);
         } catch (ResponseException e) {
-            res.status(e.StatusCode());
+            res.status(e.statusCode());
             return convertExceptionToJson(e);
         }
         res.status(200);
@@ -38,7 +38,7 @@ public class UserHandler {
         try {
             authData = userService.login(user);
         } catch (ResponseException e) {
-            res.status(e.StatusCode());
+            res.status(e.statusCode());
             return convertExceptionToJson(e);
         }
         res.status(200);
@@ -50,7 +50,7 @@ public class UserHandler {
         try {
             userService.logout(token);
         } catch (ResponseException e) {
-            res.status(e.StatusCode());
+            res.status(e.statusCode());
             return convertExceptionToJson(e);
         }
         res.status(200);
