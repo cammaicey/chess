@@ -31,9 +31,6 @@ public class GameHandler {
             return convertExceptionToJson(e);
         }
         res.status(200);
-        if (games.isEmpty()) {
-            return "{}";
-        }
         // Wrapper class for the expected JSON structure
         Map<String, Object> responseMap = new HashMap<>();
         List<Map<String, Object>> gameList = new ArrayList<>();
