@@ -5,7 +5,6 @@ import model.GameData;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.UUID;
 
 public class MemoryGameDAO implements GameDAO {
     final private HashSet<GameData> games = new HashSet<>();
@@ -40,13 +39,17 @@ public class MemoryGameDAO implements GameDAO {
         return games;
     }
 
-    public void updateGame(GameData game) {
-        for (GameData g : games) {
-            if (g.gameID() == game.gameID()) {
-                games.remove(g);
-                games.add(game);
-            }
+    public void updateGame(String playerColor, int gameID, String user) {
+        GameData game = getGame(gameID);
+        GameData newGame;
+        if (playerColor.equals("WHITE")) {
+            newGame = new GameData(gameID, user, game.blackUsername(), game.gameName());
         }
+        else {
+            newGame = new GameData(gameID, game.whiteUsername(), user, game.gameName());
+        }
+        games.remove(game);
+        games.add(newGame);
     }
 
     public void deleteGame(GameData game) {
