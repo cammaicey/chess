@@ -33,16 +33,35 @@ public class UserServiceTest {
         }
     }
 
+    //register fail
     @Test
     public void testRegisterFail() {
         UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
         try {
             userService.register(user);
-            userService.register(user);
         } catch (ResponseException | DataAccessException e) {
-            Assertions.assertThrows(ResponseException.class, () -> userService.register(user));
+            throw new RuntimeException(e);
         }
+        Assertions.assertThrows(ResponseException.class, () -> userService.register(user));
     }
 
+    //login success
+    @Test
+    public void testLogin() {
+        UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
+        try {
+            userService.register(user);
+        } catch (ResponseException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> userService.login(user));
+    }
+
+    //login fail
+    @Test
+    public void testLoginFail() {
+        UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
+        Assertions.assertThrows(ResponseException.class, () -> userService.login(user));
+    }
 
 }
