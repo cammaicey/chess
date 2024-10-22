@@ -33,5 +33,16 @@ public class UserServiceTest {
         }
     }
 
+    @Test
+    public void testRegisterFail() {
+        UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
+        try {
+            userService.register(user);
+            userService.register(user);
+        } catch (ResponseException | DataAccessException e) {
+            Assertions.assertThrows(ResponseException.class, () -> userService.register(user));
+        }
+    }
+
 
 }
