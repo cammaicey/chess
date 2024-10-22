@@ -149,7 +149,8 @@ public class ChessPiece {
             while (tcol < 8 && trow < 8 && tcol > -1 && trow > -1) {
                 tempPos = new ChessPosition(trow+1, tcol+1);
                 if (board.getPiece(tempPos) != null && //piece here
-                        ((trow == myPosition.getRow()-1 && tcol != myPosition.getColumn()-1) || (trow != myPosition.getRow()-1 && tcol == myPosition.getColumn()-1)) && //it is not start
+                        ((trow == myPosition.getRow()-1 && tcol != myPosition.getColumn()-1) ||
+                                (trow != myPosition.getRow()-1 && tcol == myPosition.getColumn()-1)) && //it is not start
                         (!tempPos.equals(pos))) { //it is not this position
                     break;
                 }
