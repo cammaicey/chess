@@ -35,7 +35,7 @@ public class UserServiceTest {
         }
     }
 
-    //test register already taken
+    //test register already taken [403]
     @Test
     public void testRegisterTaken() {
         UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
@@ -49,7 +49,19 @@ public class UserServiceTest {
         }
     }
 
-    //test register bad request
+    //test register bad request [400]
+    @Test
+    public void testRegisterBadRequest() {
+        UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
+        try {
+            userService.register(user);
+            Assertions.assertThrows(ResponseException.class, () -> userService.register(user));
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    //test register system failure
+    //test register system failure [500]
 }

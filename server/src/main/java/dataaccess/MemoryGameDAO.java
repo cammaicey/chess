@@ -52,10 +52,6 @@ public class MemoryGameDAO implements GameDAO {
         games.add(newGame);
     }
 
-    public void deleteGame(GameData game) {
-        games.remove(game);
-    }
-
     public void deleteAllGames() {
         games.clear();
     }
