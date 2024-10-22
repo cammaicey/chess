@@ -92,97 +92,11 @@ public class ChessPiece {
                     }
                 }
                 else if (pieceType == ChessPiece.PieceType.QUEEN) {
-                    if ((row == srow && col != scol) || (col == scol && row != srow)) {
-                        int trow = row;
-                        int tcol = col;
-                        if ((row == srow && col != scol) || (row != srow && col == scol)) {
-                            while (tcol < 8 && trow < 8 && tcol > -1 && trow > -1) {
-                                tempPos = new ChessPosition(trow+1, tcol+1);
-                                if (board.getPiece(tempPos) != null && //piece here
-                                        ((trow == srow && tcol != scol) || (trow != srow && tcol == scol)) && //it is not start
-                                        (!tempPos.equals(pos))) { //it is not this position
-                                    break;
-                                }
-                                else if (trow == srow && tcol == scol && //we reached the start
-                                        (board.getPiece(pos) == null || board.getPiece(pos).getTeamColor() != teamColor)) {
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
-                                    break;
-                                } else if (row != srow && col == scol) {
-                                    if (row > srow) {
-                                        trow--;
-                                    } else {trow++;}
-                                }
-                                else if (row == srow && col != scol) {
-                                    if (col > scol) {
-                                        tcol--;
-                                    } else {tcol++;}
-                                }
-                            }
-                        };
-                    }
-                    else {
-                        int trow = row;
-                        int tcol = col;
-                        if (row != srow && col != scol) {
-                            while (tcol < 8 && trow < 8 && tcol > -1 && trow > -1) {
-                                tempPos = new ChessPosition(trow+1, tcol+1);
-                                if (board.getPiece(tempPos) != null && //piece here
-                                        (trow != srow && tcol != scol) && //it is not start
-                                        (trow != row && tcol != col)) { //it is not this position
-                                    break;
-                                }
-                                else if (trow == srow && tcol == scol && //we reached the start
-                                        (board.getPiece(pos) == null || board.getPiece(pos).getTeamColor() != teamColor)) {
-                                    move = new ChessMove(myPosition, pos, null);
-                                    moves.add(move);
-                                    break;
-                                } else if (row > srow) {
-                                    trow--;
-                                    if (col > scol) {
-                                        tcol--;
-                                    } else {tcol++;}
-                                }
-                                else {
-                                    trow++;
-                                    if (col > scol) {
-                                        tcol--;
-                                    } else {tcol++;}
-                                }
-                            }
-                        }
-                    }
+                    bishopMoves(row, col, board, myPosition, moves);
+                    rookMoves(row, col, board, myPosition, moves);
                 }
                 else if (pieceType == ChessPiece.PieceType.BISHOP) {
-                    int trow = row;
-                    int tcol = col;
-                    if (row != srow && col != scol) {
-                        while (tcol < 8 && trow < 8 && tcol > -1 && trow > -1) {
-                            tempPos = new ChessPosition(trow+1, tcol+1);
-                            if (board.getPiece(tempPos) != null && //piece here
-                                    (trow != srow && tcol != scol) && //it is not start
-                                    (trow != row && tcol != col)) { //it is not this position
-                                break;
-                            }
-                            else if (trow == srow && tcol == scol && //we reached the start
-                                    (board.getPiece(pos) == null || board.getPiece(pos).getTeamColor() != teamColor)) {
-                                move = new ChessMove(myPosition, pos, null);
-                                moves.add(move);
-                                break;
-                            } else if (row > srow) {
-                                trow--;
-                                if (col > scol) {
-                                    tcol--;
-                                } else {tcol++;}
-                            }
-                            else {
-                                trow++;
-                                if (col > scol) {
-                                    tcol--;
-                                } else {tcol++;}
-                            }
-                        }
-                    }
+                    bishopMoves(row, col, board, myPosition, moves);
                 }
                 else if (pieceType == ChessPiece.PieceType.KNIGHT) {
                     if (((row == srow+2 || row == srow-2) && (col == scol+1 || col == scol-1)) ||
@@ -194,33 +108,7 @@ public class ChessPiece {
                     }
                 }
                 else if (pieceType == ChessPiece.PieceType.ROOK) {
-                    int trow = row;
-                    int tcol = col;
-                    if ((row == srow && col != scol) || (row != srow && col == scol)) {
-                        while (tcol < 8 && trow < 8 && tcol > -1 && trow > -1) {
-                            tempPos = new ChessPosition(trow+1, tcol+1);
-                            if (board.getPiece(tempPos) != null && //piece here
-                                    ((trow == srow && tcol != scol) || (trow != srow && tcol == scol)) && //it is not start
-                                    (!tempPos.equals(pos))) { //it is not this position
-                                break;
-                            }
-                            else if (trow == srow && tcol == scol && //we reached the start
-                                    (board.getPiece(pos) == null || board.getPiece(pos).getTeamColor() != teamColor)) {
-                                move = new ChessMove(myPosition, pos, null);
-                                moves.add(move);
-                                break;
-                            } else if (row != srow && col == scol) {
-                                if (row > srow) {
-                                    trow--;
-                                } else {trow++;}
-                            }
-                            else if (row == srow && col != scol) {
-                                if (col > scol) {
-                                    tcol--;
-                                } else {tcol++;}
-                            }
-                        }
-                    }
+                    rookMoves(row, col, board, myPosition, moves);
                 }
                 else if (pieceType == ChessPiece.PieceType.PAWN) {
                     if (teamColor == ChessGame.TeamColor.WHITE) {
@@ -314,5 +202,73 @@ public class ChessPiece {
             }
         }
         return moves;
+    }
+
+    public void bishopMoves(int row, int col, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves) {
+        int trow = row;
+        int tcol = col;
+        ChessMove move;
+        ChessPosition tempPos;
+        ChessPosition pos = new ChessPosition( row+1, col+1);
+        if (row != myPosition.getRow()-1 && col != myPosition.getColumn()-1) {
+            while (tcol < 8 && trow < 8 && tcol > -1 && trow > -1) {
+                tempPos = new ChessPosition(trow+1, tcol+1);
+                if (board.getPiece(tempPos) != null && //piece here
+                        (trow != myPosition.getRow()-1 && tcol != myPosition.getColumn()-1) && //it is not start
+                        (trow != row && tcol != col)) { //it is not this position
+                    break;
+                }
+                else if (trow == myPosition.getRow()-1 && tcol == myPosition.getColumn()-1 && //we reached the start
+                        (board.getPiece(pos) == null || board.getPiece(pos).getTeamColor() != teamColor)) {
+                    move = new ChessMove(myPosition, pos, null);
+                    moves.add(move);
+                    break;
+                } else if (row > myPosition.getRow()-1) {
+                    trow--;
+                    if (col > myPosition.getColumn()-1) {
+                        tcol--;
+                    } else {tcol++;}
+                }
+                else {
+                    trow++;
+                    if (col > myPosition.getColumn()-1) {
+                        tcol--;
+                    } else {tcol++;}
+                }
+            }
+        }
+    }
+
+    public void rookMoves(int row, int col, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves) {
+        int trow = row;
+        int tcol = col;
+        ChessMove move;
+        ChessPosition tempPos;
+        ChessPosition pos = new ChessPosition( row+1, col+1);
+        if ((row == myPosition.getRow()-1 && col != myPosition.getColumn()-1) || (row != myPosition.getRow()-1 && col == myPosition.getColumn()-1)) {
+            while (tcol < 8 && trow < 8 && tcol > -1 && trow > -1) {
+                tempPos = new ChessPosition(trow+1, tcol+1);
+                if (board.getPiece(tempPos) != null && //piece here
+                        ((trow == myPosition.getRow()-1 && tcol != myPosition.getColumn()-1) || (trow != myPosition.getRow()-1 && tcol == myPosition.getColumn()-1)) && //it is not start
+                        (!tempPos.equals(pos))) { //it is not this position
+                    break;
+                }
+                else if (trow == myPosition.getRow()-1 && tcol == myPosition.getColumn()-1 && //we reached the start
+                        (board.getPiece(pos) == null || board.getPiece(pos).getTeamColor() != teamColor)) {
+                    move = new ChessMove(myPosition, pos, null);
+                    moves.add(move);
+                    break;
+                } else if (row != myPosition.getRow()-1 && col == myPosition.getColumn()-1) {
+                    if (row > myPosition.getRow()-1) {
+                        trow--;
+                    } else {trow++;}
+                }
+                else if (row == myPosition.getRow()-1 && col != myPosition.getColumn()-1) {
+                    if (col > myPosition.getColumn()-1) {
+                        tcol--;
+                    } else {tcol++;}
+                }
+            }
+        }
     }
 }
