@@ -101,13 +101,7 @@ public class ChessPiece {
                     bishopMoves(row, col, board, myPosition, moves);
                 }
                 else if (pieceType == ChessPiece.PieceType.KNIGHT) {
-                    if (((row == srow+2 || row == srow-2) && (col == scol+1 || col == scol-1)) ||
-                            ((col == scol+2 || col == scol-2) && (row == srow-1 || row == srow+1))) {
-                        if (board.getPiece(pos) == null || board.getPiece(pos).getTeamColor() != teamColor) {
-                            move = new ChessMove(myPosition, pos, null);
-                            moves.add(move);
-                        }
-                    }
+                    knightMoves(row, col, board, moves, myPosition);
                 }
                 else if (pieceType == ChessPiece.PieceType.ROOK) {
                     rookMoves(row, col, board, myPosition, moves);
@@ -226,6 +220,20 @@ public class ChessPiece {
                         tcol--;
                     } else {tcol++;}
                 }
+            }
+        }
+    }
+
+    public void knightMoves(int row, int col, ChessBoard board, Collection<ChessMove> moves, ChessPosition myPosition) {
+        ChessPosition pos = new ChessPosition(row+1, col+1);
+        ChessMove move;
+        int srow = myPosition.getRow()-1;
+        int scol = myPosition.getColumn()-1;
+        if (((row == srow+2 || row == srow-2) && (col == scol+1 || col == scol-1)) ||
+                ((col == scol+2 || col == scol-2) && (row == srow-1 || row == srow+1))) {
+            if (board.getPiece(pos) == null || board.getPiece(pos).getTeamColor() != teamColor) {
+                move = new ChessMove(myPosition, pos, null);
+                moves.add(move);
             }
         }
     }
