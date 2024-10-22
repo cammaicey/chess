@@ -28,9 +28,7 @@ public class UserServiceTest {
         UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
         try {
             userService.register(user);
-        } catch (ResponseException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
+        } catch (ResponseException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -42,9 +40,7 @@ public class UserServiceTest {
         try {
             userService.register(user);
             Assertions.assertThrows(ResponseException.class, () -> userService.register(user));
-        } catch (ResponseException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
+        } catch (ResponseException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -56,9 +52,7 @@ public class UserServiceTest {
         try {
             userService.register(user);
             Assertions.assertThrows(ResponseException.class, () -> userService.register(user));
-        } catch (ResponseException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
+        } catch (ResponseException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
