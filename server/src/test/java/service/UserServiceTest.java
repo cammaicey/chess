@@ -64,4 +64,33 @@ public class UserServiceTest {
         Assertions.assertThrows(ResponseException.class, () -> userService.login(user));
     }
 
+    //logout success
+    @Test
+    public void testLogout() {
+        UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
+        AuthData authData;
+        try {
+            authData = userService.register(user);
+        } catch (ResponseException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> userService.logout(authData.authToken()));
+    }
+
+    //logout fail
+    @Test
+    public void testLogoutFail() {
+        UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
+        AuthData authData;
+        try {
+            authData = userService.register(user);
+        } catch (ResponseException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            userService.logout(authData.authToken());
+        } catch (ResponseException | DataAccessException e) {
+            Assertions.assertThrows(ResponseException.class, () -> userService.logout(authData.authToken()));
+        }
+    }
 }
