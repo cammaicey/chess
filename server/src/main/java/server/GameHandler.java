@@ -4,13 +4,12 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import exception.ResponseException;
 import model.GameData;
+import model.JoinData;
 import service.GameService;
 import spark.Request;
 import spark.Response;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static server.UserHandler.convertExceptionToJson;
 
@@ -35,7 +34,22 @@ public class GameHandler {
         if (games.isEmpty()) {
             return "{}";
         }
-        return new Gson().toJson(games);
+        // Wrapper class for the expected JSON structure
+        Map<String, Object> responseMap = new HashMap<>();
+        List<Map<String, Object>> gameList = new ArrayList<>();
+
+        for (GameData game : games) {
+            Map<String, Object> gameMap = new HashMap<>();
+            gameMap.put("gameID", game.gameID()); // Assuming GameData has this method
+            gameMap.put("whiteUsername", game.whiteUsername()); // Add logic if needed
+            gameMap.put("blackUsername", game.blackUsername()); // Add logic if needed
+            gameMap.put("gameName", game.gameName()); // Assuming GameData has this method
+            gameList.add(gameMap);
+        }
+        responseMap.put("games", gameList);
+
+        res.type("application/json");
+        return new Gson().toJson(responseMap);
     }
 
     public Object creategame(Request req, Response res) throws DataAccessException {
@@ -54,7 +68,16 @@ public class GameHandler {
         return new Gson().toJson(response);
     }
 
-    public Object joingame(Request req, Response res) {
-        return null;
+    public Object joingame(Request req, Response res) throws DataAccessException {
+        var join = new Gson().fromJson(req.body(), JoinData.class);
+        String token = req.headers("authorization");
+        try {
+            gameService.joingame(token, join);
+        } catch (ResponseException e) {
+            res.status(e.StatusCode());
+            return convertExceptionToJson(e);
+        }
+        res.status(200);
+        return "{}";
     }
 }

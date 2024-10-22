@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import exception.ResponseException;
 import model.GameData;
+import model.JoinData;
 
 import java.util.Collection;
 
@@ -41,7 +42,26 @@ public class GameService {
         return gameDAO.createGame(gameName);
     }
 
-    public void joinGame(GameData game) throws ResponseException {}
+    public void joingame(String auth, JoinData join) throws ResponseException, DataAccessException {
+        if (gameDAO.getGame(join.gameID()) == null || join.playerColor() == null) {
+            DataAccessException e = new DataAccessException("Error: bad request");
+            ResponseException r = new ResponseException(400, e.getMessage());
+            throw r;
+        }
+        else if (authDAO.getAuth(auth) == null) {
+            DataAccessException e = new DataAccessException("Error: unauthorized");
+            ResponseException r = new ResponseException(401, e.getMessage());
+            throw r;
+        }
+        else if ((join.playerColor().equals("WHITE") && gameDAO.getGame(join.gameID()).whiteUsername() != null) ||
+                (join.playerColor().equals("BLACK") && gameDAO.getGame(join.gameID()).blackUsername() != null)) {
+            DataAccessException e = new DataAccessException("Error: already taken");
+            ResponseException r = new ResponseException(403, e.getMessage());
+            throw r;
+        }
+        String username = authDAO.getUsername(auth);
+        gameDAO.updateGame(join.playerColor(), join.gameID(), username);
+    }
 
     public void clearGames() throws ResponseException, DataAccessException {
         gameDAO.deleteAllGames();
