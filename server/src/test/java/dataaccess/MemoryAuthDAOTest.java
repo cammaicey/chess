@@ -112,6 +112,7 @@ public class MemoryAuthDAOTest {
     }
 
     //test delete auth doesn't exist
+    @Test
     public void testDeleteAuthDNE() {
         AuthData authOne = new AuthData(UUID.randomUUID().toString(), "username");
         AuthData authTwo = new AuthData(UUID.randomUUID().toString(), "anotherusername");
