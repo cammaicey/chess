@@ -61,5 +61,6 @@ public class UserService {
 
     public void clearUsers() throws ResponseException, DataAccessException {
         userDAO.deleteAllUsers();
+        authDAO.deleteAllAuths();
     }
 }

@@ -66,7 +66,6 @@ public class Server {
     public Object clearAll(Request req, Response res) throws ResponseException, DataAccessException {
         userService.clearUsers();
         gameService.clearGames();
-        authDAO.deleteAllAuths();
         res.status(200);
         return "{}";
     }
