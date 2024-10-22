@@ -172,12 +172,19 @@ public class ChessGame {
                 piece = cloneBoard.getPiece(pos); //current piece
                 if (piece != null && piece.getTeamColor() != teamColor) { //enemy
                     Collection<ChessMove> moves = piece.pieceMoves(cloneBoard, pos);
-                    for (ChessMove move : moves) { //go through the piece's moves
-                        if (move.getEndPosition().equals(king)) { //the king is in the list
-                            return true; //this is check
-                        }
+                    if (isCheck(moves, king)) {
+                        return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    public boolean isCheck(Collection<ChessMove> moves, ChessPosition king) {
+        for (ChessMove move : moves) { //go through the piece's moves
+            if (move.getEndPosition().equals(king)) { //the king is in the list
+                return true; //this is check
             }
         }
         return false;
