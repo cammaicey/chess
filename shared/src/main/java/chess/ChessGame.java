@@ -260,13 +260,6 @@ public class ChessGame {
         return true;
     }
 
-    public TeamColor getOppositeTeam() {
-        if (getTeamTurn() == TeamColor.BLACK) {
-            return TeamColor.WHITE;
-        }
-        return TeamColor.BLACK;
-    }
-
     /**
      * Sets this game's chessboard with a given board
      *
