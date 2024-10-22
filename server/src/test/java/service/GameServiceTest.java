@@ -30,8 +30,6 @@ public class GameServiceTest {
         String auth = UUID.randomUUID().toString();
         try {
             gameDAO.createGame("game1");
-            gameDAO.createGame("game2");
-            gameDAO.createGame("game3");
             authDAO.createAuth(new AuthData(auth, "user1"));
             gameService.listgames(auth);
         } catch (ResponseException | DataAccessException e) {
