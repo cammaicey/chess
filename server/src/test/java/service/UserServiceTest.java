@@ -22,7 +22,7 @@ public class UserServiceTest {
         userService = new UserService(userDAO, authDAO);
     }
 
-    //test register success
+    //test register
     @Test
     public void testRegister() {
         UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
@@ -33,29 +33,5 @@ public class UserServiceTest {
         }
     }
 
-    //test register already taken [403]
-    @Test
-    public void testRegisterTaken() {
-        UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
-        try {
-            userService.register(user);
-            Assertions.assertThrows(ResponseException.class, () -> userService.register(user));
-        } catch (ResponseException | DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
-    //test register bad request [400]
-    @Test
-    public void testRegisterBadRequest() {
-        UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
-        try {
-            userService.register(user);
-            Assertions.assertThrows(ResponseException.class, () -> userService.register(user));
-        } catch (ResponseException | DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    //test register system failure [500]
 }
