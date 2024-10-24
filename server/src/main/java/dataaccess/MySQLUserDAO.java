@@ -48,7 +48,7 @@ public class MySQLUserDAO implements UserDAO {
              'username' varchar(255) NOT NULL,
              'password' varchar(255) NOT NULL,
              'email' varchar(255),
-             PRIMARY KEY ('username'),
+             PRIMARY KEY ('username')
             )
             """
     };
