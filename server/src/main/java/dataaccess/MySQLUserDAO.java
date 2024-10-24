@@ -1,6 +1,7 @@
 package dataaccess;
 
 import exception.ResponseException;
+import com.google.gson.Gson;
 import model.UserData;
 
 import java.sql.SQLException;
@@ -26,13 +27,17 @@ public class MySQLUserDAO implements UserDAO {
 
     }
 
+    private int executeUpdate(String statement, Object...params) throws ResponseException {
+        return 0;
+    }
+
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS user (
              username varchar(255) NOT NULL,
              password varchar(255) NOT NULL,
              email varchar(255),
-             PRIMARY KEY ('username'),
+             PRIMARY KEY (username),
             )
             """
     };
