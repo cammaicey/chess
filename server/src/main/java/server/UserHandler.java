@@ -8,6 +8,7 @@ import model.UserData;
 import spark.*;
 import com.google.gson.Gson;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ public class UserHandler {
         } catch (ResponseException e) {
             res.status(e.statusCode());
             return convertExceptionToJson(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         res.status(200);
         return new Gson().toJson(authData);

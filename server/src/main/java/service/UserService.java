@@ -7,6 +7,7 @@ import model.AuthData;
 import model.UserData;
 import exception.ResponseException;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class UserService {
@@ -19,7 +20,7 @@ public class UserService {
         this.authDAO = authDAO;
     }
 
-    public AuthData register(UserData user) throws ResponseException, DataAccessException {
+    public AuthData register(UserData user) throws ResponseException, DataAccessException, SQLException {
         if (user.username() == null || user.password() == null) {
             DataAccessException e = new DataAccessException("Error: bad request");
             ResponseException r = new ResponseException(400, e.getMessage());
