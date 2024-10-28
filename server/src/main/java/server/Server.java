@@ -70,7 +70,7 @@ public class Server {
         res.status(ex.statusCode());
     }
 
-    public Object clearAll(Request req, Response res) throws ResponseException, DataAccessException {
+    public Object clearAll(Request req, Response res) throws ResponseException, DataAccessException, SQLException {
         userService.clearUsers();
         gameService.clearGames();
         res.status(200);

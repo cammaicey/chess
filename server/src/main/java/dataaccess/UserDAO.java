@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public interface UserDAO {
     void createUser(UserData userData) throws DataAccessException, ResponseException, SQLException;
 
-    UserData getUser(String username) throws DataAccessException;
+    UserData getUser(String username) throws DataAccessException, ResponseException, SQLException;
 
-    void deleteAllUsers() throws DataAccessException;
+    void deleteAllUsers() throws DataAccessException, ResponseException, SQLException;
 }

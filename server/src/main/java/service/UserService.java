@@ -39,7 +39,7 @@ public class UserService {
         return authData;
     }
 
-    public AuthData login(UserData user) throws ResponseException, DataAccessException {
+    public AuthData login(UserData user) throws ResponseException, DataAccessException, SQLException {
         if (userDAO.getUser(user.username()) == null ||
                 !userDAO.getUser(user.username()).password().equals(user.password())) {
             DataAccessException e = new DataAccessException("Error: unauthorized");
@@ -60,7 +60,7 @@ public class UserService {
         authDAO.deleteAuth(authDAO.getAuth(auth));
     }
 
-    public void clearUsers() throws ResponseException, DataAccessException {
+    public void clearUsers() throws ResponseException, DataAccessException, SQLException {
         userDAO.deleteAllUsers();
         authDAO.deleteAllAuths();
     }

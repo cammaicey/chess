@@ -17,25 +17,40 @@ public class MySQLUserDAO implements UserDAO {
     }
 
     @Override
-    public void createUser(UserData userData) throws DataAccessException {
-
+    public void createUser(UserData userData) throws DataAccessException, ResponseException, SQLException {
+        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        executeUpdate(statement, userData.username(), userData.password(), userData.email());
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException {
+    public UserData getUser(String username) throws DataAccessException, ResponseException, SQLException {
+        var statement = "SELECT username, password, email FROM user WHERE username=?";
+        executeUpdate(statement);
         return null;
     }
 
     @Override
-    public void deleteAllUsers() throws DataAccessException {
-
+    public void deleteAllUsers() throws DataAccessException, ResponseException, SQLException {
+        var statement = "TRUNCATE user";
+        executeUpdate(statement);
     }
 
     private void executeUpdate(String statement, Object...params) throws ResponseException, DataAccessException, SQLException {
         try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                var rs = ps.executeQuery();
-                rs.next();
+            try (var ps = conn.prepareStatement(statement)) {
+                String sql = statement.trim();
+            if (sql.toUpperCase().startsWith("INSERT")) {
+                ps.setString(1,params[0].toString());
+                ps.setString(2, params[1].toString());
+                ps.setString(3, params[2].toString());
+            }
+            else if (sql.toUpperCase().startsWith("SELECT")) {
+                
+            }
+            else if (sql.toUpperCase().startsWith("TRUNCATE")) {
+
+            }
+            ps.executeUpdate();
             }
         } catch (SQLException e) {
             throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
@@ -44,11 +59,11 @@ public class MySQLUserDAO implements UserDAO {
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS user (
-             'username' varchar(255) NOT NULL,
-             'password' varchar(255) NOT NULL,
-             'email' varchar(255),
-             PRIMARY KEY ('username')
+            CREATE TABLE if NOT EXISTS user (
+             username varchar(255) NOT NULL,
+             password varchar(255) NOT NULL,
+             email varchar(255),
+             PRIMARY KEY (username)
             )
             """
     };
