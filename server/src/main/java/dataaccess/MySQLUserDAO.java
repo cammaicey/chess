@@ -25,8 +25,19 @@ public class MySQLUserDAO implements UserDAO {
     @Override
     public UserData getUser(String username) throws DataAccessException, ResponseException, SQLException {
         var statement = "SELECT username, password, email FROM user WHERE username=?";
-        executeUpdate(statement);
-        return null;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+                    rs.next();
+                    String password = rs.getString("password");
+                    String email = rs.getString("email");
+                    return new UserData(username, password, email);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
     }
 
     @Override
@@ -43,9 +54,6 @@ public class MySQLUserDAO implements UserDAO {
                 ps.setString(1,params[0].toString());
                 ps.setString(2, params[1].toString());
                 ps.setString(3, params[2].toString());
-            }
-            else if (sql.toUpperCase().startsWith("SELECT")) {
-                
             }
             else if (sql.toUpperCase().startsWith("TRUNCATE")) {
 
