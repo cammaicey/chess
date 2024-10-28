@@ -7,6 +7,8 @@ import service.UserService;
 import spark.*;
 import spark.route.Routes;
 
+import java.sql.SQLException;
+
 public class Server {
     UserDAO userDAO;
     GameDAO gameDAO;
@@ -19,9 +21,14 @@ public class Server {
     GameHandler gameHandler;
 
     public Server() {
-        userDAO = new MemoryUserDAO();
-        gameDAO = new MemoryGameDAO();
-        authDAO = new MemoryAuthDAO();
+
+        try {
+            userDAO = new MySQLUserDAO();
+            gameDAO = new MySQLGameDAO();
+            authDAO = new MySQLAuthDAO();
+        } catch (ResponseException | SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         userService = new UserService(userDAO, authDAO);
         gameService = new GameService(gameDAO, authDAO);
