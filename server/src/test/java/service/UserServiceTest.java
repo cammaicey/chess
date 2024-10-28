@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class UserServiceTest {
@@ -30,7 +31,7 @@ public class UserServiceTest {
         UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
         try {
             userService.register(user);
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -41,7 +42,7 @@ public class UserServiceTest {
         UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
         try {
             userService.register(user);
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
         Assertions.assertThrows(ResponseException.class, () -> userService.register(user));
@@ -53,7 +54,7 @@ public class UserServiceTest {
         UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
         try {
             userService.register(user);
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
         Assertions.assertDoesNotThrow(() -> userService.login(user));
@@ -73,7 +74,7 @@ public class UserServiceTest {
         AuthData authData;
         try {
             authData = userService.register(user);
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
         Assertions.assertDoesNotThrow(() -> userService.logout(authData.authToken()));
@@ -86,7 +87,7 @@ public class UserServiceTest {
         AuthData authData;
         try {
             authData = userService.register(user);
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
         try {
@@ -104,7 +105,7 @@ public class UserServiceTest {
         try {
             userService.register(user);
             authDAO.createAuth(auth);
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
         Assertions.assertDoesNotThrow(() -> userService.clearUsers());
