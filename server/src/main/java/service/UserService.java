@@ -41,7 +41,7 @@ public class UserService {
 
     public AuthData login(UserData user) throws ResponseException, DataAccessException, SQLException {
         if (userDAO.getUser(user.username()) == null ||
-                !userDAO.getUser(user.username()).password().equals(user.password())) {
+                !userDAO.verifyPassword(user.username(), user.password())) { //figure out how to match the password
             DataAccessException e = new DataAccessException("Error: unauthorized");
             ResponseException r = new ResponseException(401, e.getMessage());
             throw r;

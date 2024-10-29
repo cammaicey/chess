@@ -3,6 +3,7 @@ package dataaccess;
 import exception.ResponseException;
 import com.google.gson.Gson;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.sql.*;
@@ -36,7 +37,7 @@ public class MySQLUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+            return null;
         }
     }
 
@@ -51,8 +52,8 @@ public class MySQLUserDAO implements UserDAO {
             try (var ps = conn.prepareStatement(statement)) {
                 String sql = statement.trim();
             if (sql.toUpperCase().startsWith("INSERT")) {
-                ps.setString(1,params[0].toString());
-                ps.setString(2, params[1].toString());
+                ps.setString(1, params[0].toString());
+                ps.setString(2, hashPassword(params[1].toString()));
                 ps.setString(3, params[2].toString());
             }
             else if (sql.toUpperCase().startsWith("TRUNCATE")) {
@@ -63,6 +64,15 @@ public class MySQLUserDAO implements UserDAO {
         } catch (SQLException e) {
             throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
+    }
+
+    String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    public boolean verifyPassword(String username, String password) throws ResponseException, SQLException, DataAccessException {
+        UserData user = getUser(username);
+        return BCrypt.checkpw(password, user.password());
     }
 
     private final String[] createStatements = {

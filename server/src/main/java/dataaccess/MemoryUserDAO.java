@@ -28,4 +28,13 @@ public class MemoryUserDAO implements UserDAO {
     public HashSet<UserData> getUsers() {
         return users;
     }
+
+    public boolean verifyPassword(String username, String password) {
+        for (UserData user : users) {
+            if (user.username().equals(username) && user.password().equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
