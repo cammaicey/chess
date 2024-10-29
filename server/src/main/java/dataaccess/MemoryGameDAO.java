@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.Collection;
@@ -16,7 +17,7 @@ public class MemoryGameDAO implements GameDAO {
         while (getGame(id) != null) {
             id = generateRandomNumber(min, max);
         }
-        GameData game = new GameData(id, null, null, gameName);
+        GameData game = new GameData(id, null, null, gameName, new ChessGame());
         games.add(game);
         return id;
     }
@@ -43,10 +44,10 @@ public class MemoryGameDAO implements GameDAO {
         GameData game = getGame(gameID);
         GameData newGame;
         if (playerColor.equals("WHITE")) {
-            newGame = new GameData(gameID, user, game.blackUsername(), game.gameName());
+            newGame = new GameData(gameID, user, game.blackUsername(), game.gameName(), game.chessGame());
         }
         else {
-            newGame = new GameData(gameID, game.whiteUsername(), user, game.gameName());
+            newGame = new GameData(gameID, game.whiteUsername(), user, game.gameName(), game.chessGame());
         }
         games.remove(game);
         games.add(newGame);
