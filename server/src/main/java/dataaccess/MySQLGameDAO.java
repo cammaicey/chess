@@ -75,7 +75,7 @@ public class MySQLGameDAO implements GameDAO {
                 }
             }
         } catch (Exception e) {
-            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+            return result;
         }
         return result;
     }
