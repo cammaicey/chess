@@ -7,6 +7,7 @@ import exception.ResponseException;
 import model.GameData;
 import model.JoinData;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 public class GameService {
@@ -63,7 +64,7 @@ public class GameService {
         gameDAO.updateGame(join.playerColor(), join.gameID(), username);
     }
 
-    public void clearGames() throws ResponseException, DataAccessException {
+    public void clearGames() throws ResponseException, DataAccessException, SQLException {
         gameDAO.deleteAllGames();
     }
 }
