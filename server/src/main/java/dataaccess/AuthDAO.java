@@ -12,7 +12,7 @@ public interface AuthDAO {
 
     String getUsername(String authToken) throws DataAccessException;
 
-    void deleteAuth(AuthData authData) throws DataAccessException;
+    void deleteAuth(AuthData authData) throws DataAccessException, ResponseException, SQLException;
 
     void deleteAllAuths() throws DataAccessException, ResponseException, SQLException;
 }

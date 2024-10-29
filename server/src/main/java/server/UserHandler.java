@@ -50,7 +50,7 @@ public class UserHandler {
         return new Gson().toJson(authData);
     }
 
-    public Object logout(Request req, Response res) throws ResponseException, DataAccessException {
+    public Object logout(Request req, Response res) throws ResponseException, DataAccessException, SQLException {
         String token = req.headers("authorization");
         try {
             userService.logout(token);

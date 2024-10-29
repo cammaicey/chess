@@ -82,7 +82,7 @@ public class UserServiceTest {
 
     //logout fail
     @Test
-    public void testLogoutFail() {
+    public void testLogoutFail() throws SQLException {
         UserData user = new UserData("csstudent", "schoolisgreat", "cs@gmail.com");
         AuthData authData;
         try {
