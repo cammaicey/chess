@@ -1,7 +1,9 @@
 package dataaccess;
 
+import exception.ResponseException;
 import model.GameData;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 public interface GameDAO {
@@ -13,5 +15,5 @@ public interface GameDAO {
 
     void updateGame(String playerColor, int gameID, String auth) throws DataAccessException;
 
-    void deleteAllGames() throws DataAccessException;
+    void deleteAllGames() throws DataAccessException, ResponseException, SQLException;
 }

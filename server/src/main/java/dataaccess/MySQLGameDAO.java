@@ -34,8 +34,23 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void deleteAllGames() throws DataAccessException {
+    public void deleteAllGames() throws DataAccessException, ResponseException, SQLException {
+        var statement = "TRUNCATE games";
+        executeUpdate(statement);
+    }
 
+    private void executeUpdate(String statement, Object...params) throws ResponseException, DataAccessException, SQLException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                String sql = statement.trim();
+                if (sql.toUpperCase().startsWith("INSERT")) {
+
+                }
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
     }
 
     private final String[] createStatements = {
