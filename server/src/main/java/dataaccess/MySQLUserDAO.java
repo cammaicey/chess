@@ -56,9 +56,6 @@ public class MySQLUserDAO implements UserDAO {
                 ps.setString(2, hashPassword(params[1].toString()));
                 ps.setString(3, params[2].toString());
             }
-            else if (sql.toUpperCase().startsWith("TRUNCATE")) {
-
-            }
             ps.executeUpdate();
             }
         } catch (SQLException e) {
