@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -32,7 +33,7 @@ public class GameServiceTest {
             gameDAO.createGame("game1");
             authDAO.createAuth(new AuthData(auth, "user1"));
             gameService.listgames(auth);
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
         Assertions.assertDoesNotThrow(() -> gameService.listgames(auth));
@@ -48,7 +49,7 @@ public class GameServiceTest {
             gameDAO.createGame("game3");
             authDAO.createAuth(new AuthData(auth, "user1"));
             gameService.listgames(auth);
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             Assertions.assertThrows(ResponseException.class, () -> gameService.listgames(auth));
         }
     }
@@ -60,7 +61,7 @@ public class GameServiceTest {
         String gameName = "game1";
         try {
             authDAO.createAuth(new AuthData(auth, "user1"));
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | ResponseException | SQLException e) {
             throw new RuntimeException(e);
         }
         Assertions.assertDoesNotThrow(() -> gameService.creategame(auth, gameName));
@@ -91,7 +92,7 @@ public class GameServiceTest {
                     break;
                 }
             }
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
         JoinData finalJoin = join;
@@ -109,7 +110,7 @@ public class GameServiceTest {
             gameDAO.createGame("gameygame");
             join = new JoinData("BLACK", 1);
             gameService.joingame(auth, join);
-        } catch (ResponseException | DataAccessException e) {
+        } catch (ResponseException | DataAccessException | SQLException e) {
             JoinData finalJoin = join;
             Assertions.assertThrows(ResponseException.class, () -> gameService.joingame(auth, finalJoin));
         }
@@ -123,7 +124,7 @@ public class GameServiceTest {
         try {
             authDAO.createAuth(new AuthData(auth, "user1"));
             gameService.creategame(auth, gameName);
-        } catch (DataAccessException | ResponseException e) {
+        } catch (DataAccessException | ResponseException | SQLException e) {
             throw new RuntimeException(e);
         }
         Assertions.assertDoesNotThrow(() -> gameService.clearGames());
