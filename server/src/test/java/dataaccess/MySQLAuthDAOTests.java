@@ -73,6 +73,25 @@ public class MySQLAuthDAOTests {
         }
     }
 
+    @Test
+    public void testGetUsername() {
+        try {
+            authDAO.createAuth(authData);
+        } catch (ResponseException | DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> authDAO.getUsername(authData.authToken()));
+    }
+
+    @Test
+    public void testGetUsernameFail() {
+        try {
+            Assertions.assertNull(authDAO.getUsername(authData.authToken()));
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     //delete
     @Test
     public void testDeleteAllAuth() {
@@ -82,5 +101,15 @@ public class MySQLAuthDAOTests {
             throw new RuntimeException(e);
         }
         Assertions.assertDoesNotThrow(() -> authDAO.deleteAllAuths());
+    }
+
+    @Test
+    public void testDeleteAuth() {
+        try {
+            authDAO.createAuth(authData);
+        } catch (ResponseException | DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> authDAO.deleteAuth(authData));
     }
 }
