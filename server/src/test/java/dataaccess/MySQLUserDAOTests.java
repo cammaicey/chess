@@ -46,11 +46,49 @@ public class MySQLUserDAOTests {
             throw new RuntimeException(e);
         }
         Assertions.assertEquals(userData.username(), user.username());
-        //Assertions.assertTrue(passwordMatches(defaultUser.password(), user.password()));
+        //Assertions.assertTrue(verifyPassword(defaultUser.password(), user.password()));
         Assertions.assertEquals(userData.email(), user.email());
     }
 
+    @Test
+    public void testCreateUserFail() {
+        UserData user;
+        try {
+            userDAO.createUser(userData);
+            Assertions.assertThrows(ResponseException.class, () -> {userDAO.createUser(userData);});
+        } catch (DataAccessException | ResponseException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     //get
+    @Test
+    public void testGetUser() {
+        try {
+            userDAO.createUser(userData);
+        } catch (DataAccessException | ResponseException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> {userDAO.getUser(userData.username());});
+    }
+
+    @Test
+    public void testGetUserFail() {
+        try {
+            Assertions.assertNull(userDAO.getUser(userData.username()));
+        } catch (DataAccessException | ResponseException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     //delete all
+    @Test
+    public void testDeleteAllUsers() {
+        try {
+            userDAO.createUser(userData);
+        } catch (DataAccessException | ResponseException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> {userDAO.deleteAllUsers();});
+    }
 }
