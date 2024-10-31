@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameData;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;

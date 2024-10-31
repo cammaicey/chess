@@ -1,15 +1,12 @@
 package dataaccess;
 
 import exception.ResponseException;
-import com.google.gson.Gson;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.sql.*;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 
 public class MySQLUserDAO implements UserDAO {
 
