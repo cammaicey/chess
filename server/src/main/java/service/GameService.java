@@ -29,7 +29,7 @@ public class GameService {
         return gameDAO.listGames();
     }
 
-    public int creategame(String auth, String gameName) throws ResponseException, DataAccessException {
+    public int creategame(String auth, String gameName) throws ResponseException, DataAccessException, SQLException {
         if (authDAO.getAuth(auth) == null) {
             DataAccessException e = new DataAccessException("Error: unauthorized");
             ResponseException r = new ResponseException(401, e.getMessage());

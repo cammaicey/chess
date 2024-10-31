@@ -9,6 +9,7 @@ import service.GameService;
 import spark.Request;
 import spark.Response;
 
+import java.sql.SQLException;
 import java.util.*;
 
 import static server.UserHandler.convertExceptionToJson;
@@ -58,6 +59,8 @@ public class GameHandler {
         } catch (ResponseException e) {
             res.status(e.statusCode());
             return convertExceptionToJson(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         res.status(200);
         Map<String, Integer> response = new HashMap<>();

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 public interface GameDAO {
-    int createGame(String gameName) throws DataAccessException;
+    int createGame(String gameName) throws DataAccessException, ResponseException, SQLException;
 
     GameData getGame(int gameId) throws DataAccessException;
 
