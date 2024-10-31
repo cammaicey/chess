@@ -49,6 +49,29 @@ public class MySQLGameDAOTests {
         }
     }
 
+    //get game
+    @Test
+    public void testGetGame() {
+        try {
+            gameID = gameDAO.createGame("game name");
+        } catch (ResponseException | DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> {gameDAO.getGame(gameID);});
+    }
+
+    @Test
+    public void testGetGameFail() {
+        GameData gameData;
+        try {
+            gameDAO.createGame("game name");
+            gameData = gameDAO.getGame(0);
+        } catch (ResponseException | DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertNull(gameData);
+    }
+
     //list
 
     //join
