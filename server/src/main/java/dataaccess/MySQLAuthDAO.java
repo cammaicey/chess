@@ -8,7 +8,16 @@ import java.sql.SQLException;
 public class MySQLAuthDAO implements AuthDAO {
 
     public MySQLAuthDAO() throws ResponseException, SQLException, DataAccessException {
-        configDatabase();
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+        }
     }
 
     @Override
@@ -89,17 +98,4 @@ public class MySQLAuthDAO implements AuthDAO {
             )
             """
     };
-
-    private void configDatabase() throws ResponseException, DataAccessException, SQLException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
 }
