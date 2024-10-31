@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Random;
 
 public class MySQLGameDAO implements GameDAO {
@@ -21,7 +22,7 @@ public class MySQLGameDAO implements GameDAO {
     public int createGame(String gameName) throws DataAccessException, ResponseException, SQLException {
         var statement = "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?, ?)";
         int gameID = generateRandomNumber(1, 9999);
-        executeUpdate(statement, gameID, "null", "null", gameName, serializeGame(new ChessGame()));
+        executeUpdate(statement, gameID, null, null, gameName, serializeGame(new ChessGame()));
         return gameID;
     }
 
@@ -69,8 +70,18 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(String playerColor, int gameID, String auth) throws DataAccessException {
-
+    public void updateGame(String playerColor, int gameID, String user) throws DataAccessException, ResponseException, SQLException {
+        var statement = "UPDATE game SET whiteUsername=?, blackUsername=?, gameName=?, chessGame=? WHERE gameID=?";
+        GameData game = getGame(gameID);
+        String whiteUsername = null;
+        String blackUsername = null;
+        if (Objects.equals(playerColor, "WHITE")) {
+            whiteUsername = user;
+        }
+        else if (Objects.equals(playerColor, "BLACK")) {
+            blackUsername = user;
+        }
+        executeUpdate(statement, whiteUsername, blackUsername, game.gameName(), serializeGame(game.chessGame()), gameID);
     }
 
     @Override
@@ -100,10 +111,17 @@ public class MySQLGameDAO implements GameDAO {
                 String sql = statement.trim();
                 if (sql.toUpperCase().startsWith("INSERT")) {
                     ps.setInt(1, (Integer) params[0]);
-                    ps.setString(2, params[1].toString());
-                    ps.setString(3, params[2].toString());
+                    ps.setObject(2, params[1]);
+                    ps.setObject(3, params[2]);
                     ps.setString(4, params[3].toString());
                     ps.setString(5, params[4].toString());
+                }
+                else if (sql.toUpperCase().startsWith("UPDATE")) {
+                    ps.setObject(1, params[0]);
+                    ps.setObject(2, params[1]);
+                    ps.setString(3, params[2].toString());
+                    ps.setString(4, params[3].toString());
+                    ps.setInt(5, (Integer) params[4]);
                 }
                 ps.executeUpdate();
             }

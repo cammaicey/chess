@@ -9,6 +9,7 @@ import model.JoinData;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Objects;
 
 public class GameService {
 
@@ -43,8 +44,9 @@ public class GameService {
         return gameDAO.createGame(gameName);
     }
 
-    public void joingame(String auth, JoinData join) throws ResponseException, DataAccessException {
-        if (gameDAO.getGame(join.gameID()) == null || join.playerColor() == null) {
+    public void joingame(String auth, JoinData join) throws ResponseException, DataAccessException, SQLException {
+        GameData game = gameDAO.getGame(join.gameID());
+        if (game == null || join.playerColor() == null) {
             DataAccessException e = new DataAccessException("Error: bad request");
             ResponseException r = new ResponseException(400, e.getMessage());
             throw r;
@@ -54,8 +56,8 @@ public class GameService {
             ResponseException r = new ResponseException(401, e.getMessage());
             throw r;
         }
-        else if ((join.playerColor().equals("WHITE") && gameDAO.getGame(join.gameID()).whiteUsername() != null) ||
-                (join.playerColor().equals("BLACK") && gameDAO.getGame(join.gameID()).blackUsername() != null)) {
+        else if ((join.playerColor().equals("WHITE") && !Objects.equals(game.whiteUsername(), null)) ||
+                (join.playerColor().equals("BLACK") && !Objects.equals(game.blackUsername(), null))) {
             DataAccessException e = new DataAccessException("Error: already taken");
             ResponseException r = new ResponseException(403, e.getMessage());
             throw r;

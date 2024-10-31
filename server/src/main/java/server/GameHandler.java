@@ -76,6 +76,8 @@ public class GameHandler {
         } catch (ResponseException e) {
             res.status(e.statusCode());
             return convertExceptionToJson(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         res.status(200);
         return "{}";
