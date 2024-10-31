@@ -70,11 +70,14 @@ public class MySQLGameDAO implements GameDAO {
         GameData game = getGame(gameID);
         String whiteUsername = game.whiteUsername();
         String blackUsername = game.blackUsername();
-        if (Objects.equals(playerColor, "WHITE")) {
+        if (Objects.equals(playerColor, "WHITE") && whiteUsername == null) {
             whiteUsername = user;
         }
-        else if (Objects.equals(playerColor, "BLACK")) {
+        else if (Objects.equals(playerColor, "BLACK") && blackUsername == null) {
             blackUsername = user;
+        }
+        else {
+            throw new SQLException();
         }
         executeUpdate(statement, whiteUsername, blackUsername, game.gameName(), serializeGame(game.chessGame()), gameID);
     }

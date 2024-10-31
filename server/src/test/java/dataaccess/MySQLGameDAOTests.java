@@ -73,10 +73,47 @@ public class MySQLGameDAOTests {
     }
 
     //list
+    @Test
+    public void testListGames() {
+        try {
+            gameDAO.createGame("game name");
+        } catch (ResponseException | DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> {gameDAO.listGames();});
+    }
 
-    //join
+    //update
+    @Test
+    public void testUpdateGame() {
+        try {
+            gameID = gameDAO.createGame("game name");
+            gameDAO.updateGame("WHITE", gameID, "whiteUser");
+            Assertions.assertNotNull(gameDAO.getGame(gameID).whiteUsername());
+        } catch (ResponseException | DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testUpdateGameFail() {
+        try {
+            gameID = gameDAO.createGame("game name");
+            gameDAO.updateGame("WHITE", gameID, "whiteUser");
+        } catch (ResponseException | DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertThrows(SQLException.class, () -> {gameDAO.updateGame("WHITE", gameID, "whiteUser");});
+    }
 
     //clear
     @Test
-    public void testClearGames() {}
+    public void testClearGames() {
+        try {
+            gameDAO.createGame("game name");
+        } catch (ResponseException | DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertDoesNotThrow(() -> {gameDAO.deleteAllGames();});
+    }
 }
