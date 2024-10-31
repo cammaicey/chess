@@ -5,22 +5,12 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
-import java.sql.*;
 
 
 public class MySQLUserDAO implements UserDAO {
 
     public MySQLUserDAO() throws ResponseException, SQLException, DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        }
+        configDatabase();
     }
 
     @Override
@@ -86,6 +76,36 @@ public class MySQLUserDAO implements UserDAO {
              email varchar(255),
              PRIMARY KEY (username)
             )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS auth (
+             authToken varchar(255) NOT NULL,
+             username varchar(255) NOT NULL,
+             PRIMARY KEY (authToken)
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS game (
+             gameID INT NOT NULL,
+             whiteUsername varchar(255),
+             blackUsername varchar(255),
+             gameName varchar(255),
+             chessGame TEXT,
+             PRIMARY KEY (gameID)
+            )
             """
     };
+
+    private void configDatabase() throws ResponseException, DataAccessException, SQLException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+    }
 }

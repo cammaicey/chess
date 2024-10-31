@@ -13,19 +13,6 @@ import java.util.Random;
 
 public class MySQLGameDAO implements GameDAO {
 
-    public MySQLGameDAO() throws ResponseException, SQLException, DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
-
     @Override
     public int createGame(String gameName) throws DataAccessException, ResponseException, SQLException {
         var statement = "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?, ?)";
@@ -137,17 +124,4 @@ public class MySQLGameDAO implements GameDAO {
             throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS game (
-             gameID INT NOT NULL,
-             whiteUsername varchar(255),
-             blackUsername varchar(255),
-             gameName varchar(255),
-             chessGame TEXT,
-             PRIMARY KEY (gameID)
-            )
-            """
-    };
 }
