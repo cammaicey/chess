@@ -4,13 +4,11 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameData;
-import model.UserData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 
 public class MySQLGameDAO implements GameDAO {
@@ -20,21 +18,11 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     @Override
-    public int createGame(String gameName) throws DataAccessException {
-        var statement = "INSERT INTO gameData (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
-        try (var conn = DatabaseManager.getConnection()) {
-            int gameID = generateRandomNumber(1, 9999);
-            try (var ps = conn.prepareStatement(statement)) {
-                ps.setInt(1, gameID);
-                ps.setString(2, null);
-                ps.setString(3, null);
-                ps.setString(4, gameName);
-                ps.setString(5, serializeGame(new ChessGame()));
-                return gameID;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public int createGame(String gameName) throws DataAccessException, ResponseException, SQLException {
+        var statement = "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?, ?)";
+        int gameID = generateRandomNumber(1, 9999);
+        executeUpdate(statement, gameID, "null", "null", gameName, serializeGame(new ChessGame()));
+        return gameID;
     }
 
     public static int generateRandomNumber(int min, int max) {
@@ -44,17 +32,17 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM user WHERE gameID=?";
+        var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID=?";
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
                     rs.next();
-                    String whiteUsername = rs.getString("whiteUsername");
-                    String blackUsername = rs.getString("blackUsername");
-                    String gameName = rs.getString("gameName");
-                    ChessGame game = deserializeGame(rs.getString("game"));
-                    return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+                    var whiteUsername = rs.getString("whiteUsername");
+                    var blackUsername = rs.getString("blackUsername");
+                    var gameName = rs.getString("gameName");
+                    var chessGame = deserializeGame(rs.getString("chessGame"));
+                    return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
                 }
             }
         } catch (SQLException e) {
@@ -66,11 +54,11 @@ public class MySQLGameDAO implements GameDAO {
     public Collection<GameData> listGames() throws DataAccessException, ResponseException {
         var result = new HashSet<GameData>();
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM user WHERE gameID=?";
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        result.add(readGame(rs));
+                        result.add(getGame(rs.getInt("gameID")));
                     }
                 }
             }
@@ -80,15 +68,6 @@ public class MySQLGameDAO implements GameDAO {
         return result;
     }
 
-    private GameData readGame(ResultSet rs) throws SQLException {
-        var id = rs.getInt("gameID");
-        var whiteUsername = rs.getString("whiteUsername");
-        var blackUsername = rs.getString("blackUsername");
-        var gameName = rs.getString("gameName");
-        var game = deserializeGame(rs.getString("game"));
-        return new GameData(id, whiteUsername, blackUsername, gameName, game);
-    }
-
     @Override
     public void updateGame(String playerColor, int gameID, String auth) throws DataAccessException {
 
@@ -96,6 +75,14 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void deleteAllGames() throws DataAccessException {
+        var statement = "TRUNCATE game";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String serializeGame(ChessGame game) {
@@ -107,9 +94,27 @@ public class MySQLGameDAO implements GameDAO {
         return new Gson().fromJson(json, ChessGame.class);
     }
 
+    private void executeUpdate(String statement, Object...params) throws ResponseException, DataAccessException, SQLException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                String sql = statement.trim();
+                if (sql.toUpperCase().startsWith("INSERT")) {
+                    ps.setInt(1, (Integer) params[0]);
+                    ps.setString(2, params[1].toString());
+                    ps.setString(3, params[2].toString());
+                    ps.setString(4, params[3].toString());
+                    ps.setString(5, params[4].toString());
+                }
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+    }
+
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS gameData (
+            CREATE TABLE IF NOT EXISTS game (
              gameID INT NOT NULL,
              whiteUsername varchar(255),
              blackUsername varchar(255),
