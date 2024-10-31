@@ -73,8 +73,8 @@ public class MySQLGameDAO implements GameDAO {
     public void updateGame(String playerColor, int gameID, String user) throws DataAccessException, ResponseException, SQLException {
         var statement = "UPDATE game SET whiteUsername=?, blackUsername=?, gameName=?, chessGame=? WHERE gameID=?";
         GameData game = getGame(gameID);
-        String whiteUsername = null;
-        String blackUsername = null;
+        String whiteUsername = game.whiteUsername();
+        String blackUsername = game.blackUsername();
         if (Objects.equals(playerColor, "WHITE")) {
             whiteUsername = user;
         }
