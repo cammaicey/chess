@@ -10,6 +10,12 @@ import static ui.EscapeSequences.*;
 
 public class DrawBoard {
 
+    ChessGame game;
+
+    public DrawBoard(ChessGame game) {
+        this.game = game;
+    }
+
     public void drawBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
@@ -17,6 +23,11 @@ public class DrawBoard {
 
         drawHeader(out);
 
+        for (int row = 0; row < 8; row++) {
+            drawRow(out, row);
+        }
+
+        drawHeader(out);
 
     }
 

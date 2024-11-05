@@ -6,7 +6,7 @@ public class Main {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Client: " + piece);
 
-        DrawBoard drawBoard = new DrawBoard();
+        DrawBoard drawBoard = new DrawBoard(new ChessGame());
         drawBoard.drawBoard();
     }
 }
