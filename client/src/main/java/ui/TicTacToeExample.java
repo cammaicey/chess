@@ -25,7 +25,7 @@ public class TicTacToeExample {
 
         out.print(ERASE_SCREEN);
 
-        //drawHeaders(out);
+        drawHeaders(out);
 
         drawTicTacToeBoard(out);
 
