@@ -39,17 +39,15 @@ public class DrawBoard {
             if (boardCol == 0) {
                 out.print("   ".repeat(1));
             }
-            int prefixLength = 1;
-            int suffixLength = 1;
 
-            out.print("   ".repeat(prefixLength));
+            out.print("   ".repeat(1));
             out.print(SET_BG_COLOR_DARK_GREY);
             out.print(SET_TEXT_COLOR_MAGENTA);
 
             out.print(headers[boardCol]);
 
             out.print(SET_BG_COLOR_DARK_GREY);
-            out.print("   ".repeat(suffixLength));
+            out.print("   ".repeat(1));
 
             if (boardCol == 7) {
                 out.print("   ".repeat(1));
@@ -60,7 +58,18 @@ public class DrawBoard {
         out.println();
     }
 
-    private void drawRow(PrintStream out, int row) {}
+    private void drawRow(PrintStream out, int row) {
+        out.print(" ");
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_MAGENTA);
+
+        out.print(row+1);
+
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(" ");
+
+        out.println();
+    }
 
     private void blackSquare() {}
 
