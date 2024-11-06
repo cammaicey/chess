@@ -39,20 +39,20 @@ public class DrawBoard {
         String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
         for (int boardCol = 0; boardCol < 8; ++boardCol) {
             if (boardCol == 0) {
-                out.print("   ".repeat(2));
+                out.print("   ".repeat(1));
             }
 
-            //out.print(" ".repeat(1));
+            out.print(" ".repeat(1));
             out.print(SET_BG_COLOR_DARK_GREY);
             out.print(SET_TEXT_COLOR_MAGENTA);
 
             out.print(headers[boardCol]);
 
             out.print(SET_BG_COLOR_DARK_GREY);
-            out.print("   ".repeat(1));
+            out.print(" ".repeat(1));
 
             if (boardCol == 7) {
-                //out.print("   ".repeat(1));
+                out.print("   ".repeat(1));
                 out.print(RESET_BG_COLOR);
             }
         }
@@ -63,7 +63,7 @@ public class DrawBoard {
     private void drawRow(PrintStream out, int row) {
         out.print(SET_BG_COLOR_DARK_GREY);
 
-        out.print("   ".repeat(1));
+        out.print(" ".repeat(1));
         out.print(SET_BG_COLOR_DARK_GREY);
         out.print(SET_TEXT_COLOR_MAGENTA);
 
@@ -72,6 +72,7 @@ public class DrawBoard {
         out.print(SET_BG_COLOR_DARK_GREY);
         out.print(" ".repeat(1));
 
+        //printing the actual board
         for (int boardCol = 0; boardCol < 8; ++boardCol) {
             ChessPosition pos = new ChessPosition(row+1, boardCol+1);
             ChessPiece piece = game.getBoard().getPiece(pos);
@@ -104,14 +105,14 @@ public class DrawBoard {
         out.print(row+1);
 
         out.print(SET_BG_COLOR_DARK_GREY);
-        out.print("   ".repeat(1));
+        out.print(" ".repeat(1));
 
         out.print(RESET_BG_COLOR);
 
         out.println();
     }
 
-    private void blackSquare(PrintStream out, ChessPiece piece) {
+    private void whiteSquare(PrintStream out, ChessPiece piece) {
         //out.print("   ".repeat(1));
         out.print(SET_BG_COLOR_DARK_GREEN); // "white" background
         if (piece != null) {
@@ -134,7 +135,7 @@ public class DrawBoard {
         //out.print("   ".repeat(1));
     }
 
-    private void whiteSquare(PrintStream out, ChessPiece piece) {
+    private void blackSquare(PrintStream out, ChessPiece piece) {
         //out.print("   ".repeat(1));
         out.print(SET_BG_COLOR_LIGHT_GREY); // "white" background
         if (piece != null) {
