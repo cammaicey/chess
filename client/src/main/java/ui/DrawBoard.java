@@ -23,20 +23,36 @@ public class DrawBoard {
 
         out.print(ERASE_SCREEN);
 
-        drawHeader(out);
+        drawHeader(out, false);
 
         for (int row = 0; row < 8; row++) {
-            drawRow(out, row);
+            drawRow(out, row, false);
         }
 
-        drawHeader(out);
+        drawHeader(out, false);
+
+        //reverse
+        int row = 7;
+
+        drawHeader(out, true);
+
+        while (row >= 0) {
+            drawRow(out, row, true);
+            row--;
+        }
+
+        drawHeader(out, true);
 
     }
 
-    private void drawHeader(PrintStream out) {
+    private void drawHeader(PrintStream out, boolean reverse) {
         out.print(SET_BG_COLOR_DARK_GREY);
 
-        String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        String[] headers = {"h", "g", "f", "e", "d", "c", "b", "a"};
+        if (reverse) {
+            headers = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
+        }
+
         for (int boardCol = 0; boardCol < 8; ++boardCol) {
             if (boardCol == 0) {
                 out.print("   ".repeat(1));
@@ -44,7 +60,7 @@ public class DrawBoard {
 
             out.print(" ".repeat(1));
             out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(SET_TEXT_COLOR_MAGENTA);
+            out.print(SET_TEXT_COLOR_LIGHT_GREY);
 
             out.print(headers[boardCol]);
 
@@ -60,12 +76,12 @@ public class DrawBoard {
         out.println();
     }
 
-    private void drawRow(PrintStream out, int row) {
+    private void drawRow(PrintStream out, int row ,boolean reverse) {
         out.print(SET_BG_COLOR_DARK_GREY);
 
         out.print(" ".repeat(1));
         out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_MAGENTA);
+        out.print(SET_TEXT_COLOR_LIGHT_GREY);
 
         out.print(row+1);
 
@@ -73,7 +89,15 @@ public class DrawBoard {
         out.print(" ".repeat(1));
 
         //printing the actual board
-        for (int boardCol = 0; boardCol < 8; ++boardCol) {
+        int boardCol;
+        if (reverse) {
+            boardCol = 7;
+        }
+        else {
+            boardCol = 0;
+        }
+
+        while (boardCol < 8 && boardCol >= 0) {
             ChessPosition pos = new ChessPosition(row+1, boardCol+1);
             ChessPiece piece = game.getBoard().getPiece(pos);
 
@@ -94,13 +118,20 @@ public class DrawBoard {
                     whiteSquare(out, piece);
                 }
             }
+
+            if (reverse) {
+                boardCol--;
+            }
+            else {
+                boardCol++;
+            }
         }
 
         out.print(SET_BG_COLOR_DARK_GREY);
 
         out.print(" ".repeat(1));
         out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_MAGENTA);
+        out.print(SET_TEXT_COLOR_LIGHT_GREY);
 
         out.print(row+1);
 
