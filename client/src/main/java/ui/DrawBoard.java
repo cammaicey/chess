@@ -1,6 +1,8 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -37,10 +39,10 @@ public class DrawBoard {
         String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
         for (int boardCol = 0; boardCol < 8; ++boardCol) {
             if (boardCol == 0) {
-                out.print("   ".repeat(1));
+                out.print("   ".repeat(2));
             }
 
-            out.print("   ".repeat(1));
+            //out.print(" ".repeat(1));
             out.print(SET_BG_COLOR_DARK_GREY);
             out.print(SET_TEXT_COLOR_MAGENTA);
 
@@ -50,7 +52,7 @@ public class DrawBoard {
             out.print("   ".repeat(1));
 
             if (boardCol == 7) {
-                out.print("   ".repeat(1));
+                //out.print("   ".repeat(1));
                 out.print(RESET_BG_COLOR);
             }
         }
@@ -59,19 +61,121 @@ public class DrawBoard {
     }
 
     private void drawRow(PrintStream out, int row) {
-        out.print(" ");
+        out.print(SET_BG_COLOR_DARK_GREY);
+
+        out.print("   ".repeat(1));
         out.print(SET_BG_COLOR_DARK_GREY);
         out.print(SET_TEXT_COLOR_MAGENTA);
 
         out.print(row+1);
 
         out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(" ");
+        out.print(" ".repeat(1));
+
+        for (int boardCol = 0; boardCol < 8; ++boardCol) {
+            ChessPosition pos = new ChessPosition(row+1, boardCol+1);
+            ChessPiece piece = game.getBoard().getPiece(pos);
+
+            if (row % 2 == 0) { //even row
+                if (boardCol % 2 == 0) {
+                    whiteSquare(out, piece);
+                }
+                else {
+                    blackSquare(out, piece);
+                }
+
+            }
+            else { //odd row
+                if (boardCol % 2 == 0) {
+                    blackSquare(out, piece);
+                }
+                else {
+                    whiteSquare(out, piece);
+                }
+            }
+        }
+
+        out.print(SET_BG_COLOR_DARK_GREY);
+
+        out.print(" ".repeat(1));
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_MAGENTA);
+
+        out.print(row+1);
+
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print("   ".repeat(1));
+
+        out.print(RESET_BG_COLOR);
 
         out.println();
     }
 
-    private void blackSquare() {}
+    private void blackSquare(PrintStream out, ChessPiece piece) {
+        //out.print("   ".repeat(1));
+        out.print(SET_BG_COLOR_DARK_GREEN); // "white" background
+        if (piece != null) {
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) { // white player
+                out.print(SET_TEXT_COLOR_WHITE);
+            }
+            else { // black player
+                out.print(SET_TEXT_COLOR_BLACK);
+            }
+        }
 
-    private void whiteSquare() {}
+        if (piece != null) {
+            printPiece(out, piece.getPieceType());
+        }
+        else {
+            out.print("   ".repeat(1));
+        }
+
+        out.print(SET_BG_COLOR_DARK_GREEN);
+        //out.print("   ".repeat(1));
+    }
+
+    private void whiteSquare(PrintStream out, ChessPiece piece) {
+        //out.print("   ".repeat(1));
+        out.print(SET_BG_COLOR_LIGHT_GREY); // "white" background
+        if (piece != null) {
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) { // white player
+                out.print(SET_TEXT_COLOR_WHITE);
+            }
+            else { // black player
+                out.print(SET_TEXT_COLOR_BLACK);
+            }
+        }
+
+
+        if (piece != null) {
+            printPiece(out, piece.getPieceType());
+        }
+        else {
+            out.print("   ".repeat(1));
+        }
+
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        //out.print("   ".repeat(1));
+    }
+
+    private void printPiece(PrintStream out, ChessPiece.PieceType pieceType) {
+        if (pieceType == ChessPiece.PieceType.KING) {
+            out.print(" K ");
+        }
+        else if (pieceType == ChessPiece.PieceType.QUEEN) {
+            out.print(" Q ");
+        }
+        else if (pieceType == ChessPiece.PieceType.BISHOP) {
+            out.print(" B ");
+        }
+        else if (pieceType == ChessPiece.PieceType.KNIGHT) {
+            out.print(" N ");
+        }
+        else if (pieceType == ChessPiece.PieceType.ROOK) {
+            out.print(" R ");
+        }
+        else if (pieceType == ChessPiece.PieceType.PAWN) {
+            out.print(" P ");
+        }
+    }
 }
