@@ -48,9 +48,9 @@ public class DrawBoard {
     private void drawHeader(PrintStream out, boolean reverse) {
         out.print(SET_BG_COLOR_DARK_GREY);
 
-        String[] headers = {"h", "g", "f", "e", "d", "c", "b", "a"};
-        if (reverse) {
-            headers = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
+        String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        if (!reverse) {
+            headers = new String[]{"h", "g", "f", "e", "d", "c", "b", "a"};
         }
 
         for (int boardCol = 0; boardCol < 8; ++boardCol) {
@@ -90,7 +90,7 @@ public class DrawBoard {
 
         //printing the actual board
         int boardCol;
-        if (reverse) {
+        if (!reverse) {
             boardCol = 7;
         }
         else {
@@ -119,7 +119,7 @@ public class DrawBoard {
                 }
             }
 
-            if (reverse) {
+            if (!reverse) {
                 boardCol--;
             }
             else {
@@ -177,7 +177,6 @@ public class DrawBoard {
                 out.print(SET_TEXT_COLOR_BLACK);
             }
         }
-
 
         if (piece != null) {
             printPiece(out, piece.getPieceType());
