@@ -1,7 +1,5 @@
 package ui;
 
-import client.Communicator;
-
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -11,10 +9,7 @@ import static ui.EscapeSequences.*;
 
 public class REPL {
 
-    private final Communicator client;
-
     public REPL() {
-        client = new Communicator();
     }
 
     public void run() {
