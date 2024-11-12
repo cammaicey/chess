@@ -4,12 +4,14 @@ import client.ServerFacade;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
+import model.JoinData;
 import model.UserData;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -17,8 +19,7 @@ import static ui.EscapeSequences.*;
 
 public class REPL {
     private UserData userData;
-    private AuthData authData;
-    private GameData gameData;
+    private JoinData joinData;
     String serverURL;
     ServerFacade client;
 
@@ -83,8 +84,11 @@ public class REPL {
                 }
             }
             else if (Objects.equals(line, "3")) {
-                //numbered list (doesn't correspond to game id)
-                //game name + player names
+                try {
+                    client.listgames();
+                } catch (ResponseException e) {
+                    throw new RuntimeException(e);
+                }
             }
             else if (Objects.equals(line, "4")) {
                 out.println("Please enter the number of the game you wish to join.");
@@ -96,6 +100,13 @@ public class REPL {
             else if (Objects.equals(line, "5")) {
                 out.println("Please enter the number of the game you wish to observe.");
                 scanner.nextLine();
+            }
+            else if (Objects.equals(line, "6")) {
+                out.println("Press 1 to logout and return to the previous menu.");
+                out.println("Press 2 to creat a new game.");
+                out.println("Press 3 to list all games.");
+                out.println("Press 4 to join a game.");
+                out.println("Press 5 to observe a game.");
             }
             else {
                 out.println("Invalid selection.\n");
@@ -159,6 +170,7 @@ public class REPL {
         out.println("\t3. List Games");
         out.println("\t4. Play Game");
         out.println("\t5. Observe Game");
+        out.println("\t6. Help");
     }
 
 }
