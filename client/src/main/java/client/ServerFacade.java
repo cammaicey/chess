@@ -5,20 +5,23 @@ import exception.ResponseException;
 import model.GameData;
 import model.UserData;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class ServerFacade {
     private Communicator communicator;
-    private String authToken;
+    String auth;
 
     public ServerFacade(String serverURL) {
         communicator = new Communicator(this, serverURL);
     }
 
-    void setAuth(String authToken) {
-        this.authToken = authToken;
+    public void setAuth(String auth) {
+        this.auth = auth;
     }
 
-    String getAuth() {
-        return authToken;
+    public String getAuth() {
+        return auth;
     }
 
     public void register(UserData user) throws ResponseException {
@@ -26,14 +29,14 @@ public class ServerFacade {
         communicator.register("POST", path, user);
     }
 
-    public void login(UserData user) throws ResponseException {
+    public void login(UserData user) throws ResponseException, URISyntaxException, IOException {
         var path = "/session";
         communicator.login("POST", path, user);
     }
 
     public void logout() throws ResponseException {
         var path = "/session";
-        communicator.logout("POST", path);
+        communicator.logout("DELETE", path);
     }
 
 //    public Object listgames(GameData game) throws ResponseException {
@@ -41,10 +44,10 @@ public class ServerFacade {
 //        return communicator.listgames("GET", path, game);
 //    }
 //
-//    public Object creategame(GameData game) throws ResponseException {
-//        var path = "/game";
-//        return communicator.creatgame("POST", path, game);
-//    }
+    public void creategame(String name) throws ResponseException {
+        var path = "/game";
+        communicator.creategame("POST", path, name);
+    }
 //
 //    public Object joingame(GameData game) throws ResponseException {
 //        var path = "/game";

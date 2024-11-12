@@ -6,7 +6,9 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
+import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Scanner;
@@ -18,10 +20,10 @@ public class REPL {
     private AuthData authData;
     private GameData gameData;
     String serverURL;
-    ServerFacade server;
+    ServerFacade client;
 
     public REPL(String serverURL) {
-        server = new ServerFacade(serverURL);
+        client = new ServerFacade(serverURL);
     }
 
     public void run() {
@@ -57,7 +59,7 @@ public class REPL {
                 System.exit(0);
             }
             else {
-                out.println("Invalid selection.");
+                out.println("Invalid selection.\n");
             }
         }
         while (loggedIn) {
@@ -65,16 +67,20 @@ public class REPL {
             String line = scanner.nextLine();
             if (Objects.equals(line, "1")) {
                 try {
-                    server.logout();
-                    out.println("Successfully logged out.\n");
-                    loggedIn = false;
+                    client.logout();
+                    run();
                 } catch (ResponseException e) {
                     throw new RuntimeException(e);
                 }
             }
             else if (Objects.equals(line, "2")) {
                 out.println("Please enter a name for your game.");
-                scanner.nextLine();
+                String name = scanner.nextLine();
+                try {
+                    client.creategame(name);
+                } catch (ResponseException e) {
+                    throw new RuntimeException(e);
+                }
             }
             else if (Objects.equals(line, "3")) {
                 //numbered list (doesn't correspond to game id)
@@ -92,7 +98,7 @@ public class REPL {
                 scanner.nextLine();
             }
             else {
-                out.println("Invalid selection.");
+                out.println("Invalid selection.\n");
             }
         }
 
@@ -109,13 +115,25 @@ public class REPL {
     private void menuRegister (PrintStream out, Scanner scanner) {
         out.println("Please enter a username.");
         String username = scanner.nextLine();
+        while (username.isEmpty()) {
+            out.println("Please enter a username.");
+            username = scanner.nextLine();
+        }
         out.println("Please enter and email address.");
         String email = scanner.nextLine();
+        while (email.isEmpty()) {
+            out.println("Please enter an email address.");
+            email = scanner.nextLine();
+        }
         out.println("Please enter a password.");
         String password = scanner.nextLine();
+        while (password.isEmpty()) {
+            out.println("Please enter a password.");
+            password = scanner.nextLine();
+        }
         userData = new UserData(username, password, email);
         try {
-            server.register(userData);
+            client.register(userData);
         } catch (ResponseException e) {
             throw new RuntimeException(e);
         }
@@ -128,8 +146,8 @@ public class REPL {
         String password = scanner.nextLine();
         userData = new UserData(username, password, "");
         try {
-            server.login(userData);
-        } catch (ResponseException e) {
+            client.login(userData);
+        } catch (ResponseException | URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,32 +26,46 @@ public class Communicator {
         this.serverFacade = facade;
     }
 
-    public Object register(String action, String path, UserData user) throws ResponseException {
-        var body = this.makeRequest(action, path, user, UserData.class);
-        return body;
+    public void register(String action, String path, UserData user) throws ResponseException {
+        var result = this.makeRequest(action, path, user, Map.class);
+        serverFacade.setAuth((String) result.get("authToken"));
     }
 
-    public Object login(String action, String path, UserData user) throws ResponseException {
-        return this.makeRequest(action, path, user, UserData.class);
+    public void login(String action, String path, UserData user) throws ResponseException, URISyntaxException, IOException {
+        var result = this.makeRequest(action, path, user, Map.class);
+        serverFacade.setAuth((String) result.get("authToken"));
     }
 
     public void logout(String action, String path) throws ResponseException {
-        this.makeRequest(action, path, null, null);
+        this.makeRequest(action, path, null, Map.class);
         serverFacade.setAuth(null);
     }
 
+    public void creategame(String action, String path, String name) throws ResponseException {
+        this.makeRequest(action, path, name, String.class);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+        Map result;
         try {
             URL url = (new URI(serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
+            if (serverFacade.getAuth() != null) {
+                http.addRequestProperty("Authorization", serverFacade.getAuth());
+            }
+
             writeBody(request, http);
 
             http.connect();
             throwIfNotSuccessful(http);
-            return readBody(http, responseClass);
+            try (InputStream body = http.getInputStream()) {
+                InputStreamReader inputStreamReader = new InputStreamReader(body);
+                result = new Gson().fromJson(inputStreamReader, Map.class);
+            }
+            return (T) result;
         } catch (Exception ex) {
             throw new ResponseException(500, ex.getMessage());
         }
@@ -74,18 +89,18 @@ public class Communicator {
         }
     }
 
-    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
-        T response = null;
-        if (http.getContentLength() < 0) {
-            try (InputStream respBody = http.getInputStream()) {
-                InputStreamReader reader = new InputStreamReader(respBody);
-                if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
-                }
-            }
-        }
-        return response;
-    }
+//    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
+//        T response = null;
+//        if (http.getContentLength() < 0) {
+//            try (InputStream respBody = http.getInputStream()) {
+//                InputStreamReader reader = new InputStreamReader(respBody);
+//                if (responseClass != null) {
+//                    response = new Gson().fromJson(reader, responseClass);
+//                }
+//            }
+//        }
+//        return response;
+//    }
 
 
     private boolean isSuccessful(int status) {
