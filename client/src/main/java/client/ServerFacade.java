@@ -2,7 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
-import model.GameData;
+import model.JoinData;
 import model.UserData;
 
 import java.io.IOException;
@@ -39,18 +39,18 @@ public class ServerFacade {
         communicator.logout("DELETE", path);
     }
 
-//    public Object listgames(GameData game) throws ResponseException {
-//        var path = "/game";
-//        return communicator.listgames("GET", path, game);
-//    }
-//
+    public Object listgames() throws ResponseException {
+        var path = "/game";
+        return communicator.listgames("GET", path);
+    }
+
     public void creategame(String name) throws ResponseException {
         var path = "/game";
         communicator.creategame("POST", path, name);
     }
-//
-//    public Object joingame(GameData game) throws ResponseException {
-//        var path = "/game";
-//        return communicator.joingame("POST", path, game);
-//    }
+
+    public void joingame(JoinData join) throws ResponseException {
+        var path = "/game";
+        communicator.joingame("POST", path, join);
+    }
 }

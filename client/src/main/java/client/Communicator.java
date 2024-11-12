@@ -3,6 +3,8 @@ package client;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import exception.ResponseException;
+import model.GameData;
+import model.JoinData;
 import model.UserData;
 
 import java.io.IOException;
@@ -13,9 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Communicator {
     private final String serverURL;
@@ -41,9 +41,67 @@ public class Communicator {
         serverFacade.setAuth(null);
     }
 
-    public void creategame(String action, String path, String name) throws ResponseException {
-        this.makeRequest(action, path, name, String.class);
+    public void creategame(String action, String path, String gameName) throws ResponseException {
+        Map<String, String> requestData = Map.of("gameName", gameName);
+        this.makeRequest(action, path, requestData, Map.class);
     }
+
+    public Map listgames(String action, String path) throws ResponseException {
+        Map games = this.makeRequest(action, path, null, Map.class);
+        return games;
+    }
+
+    public void joingame(String action, String path, JoinData join) throws ResponseException {
+        var result = this.makeRequest(action, path, join, Map.class);
+        serverFacade.setGameID((Integer) result.get("gameID"));
+    }
+
+//    private Map request(String method, String endpoint, String body) {
+//        Map respMap;
+//        try {
+//            HttpURLConnection http = makeConnection(method, endpoint, body);
+//
+//            try {
+//                if (http.getResponseCode() == 401) {
+//                    return Map.of("Error", 401);
+//                }
+//            } catch (IOException e) {
+//                return Map.of("Error", 401);
+//            }
+//
+//
+//            try (InputStream respBody = http.getInputStream()) {
+//                InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+//                respMap = new Gson().fromJson(inputStreamReader, Map.class);
+//            }
+//
+//        } catch (URISyntaxException | IOException e) {
+//            return Map.of("Error", e.getMessage());
+//        }
+//
+//        return respMap;
+//    }
+//
+//    private HttpURLConnection makeConnection(String method, String endpoint, String body) throws URISyntaxException, IOException {
+//        URI uri = new URI(serverURL + endpoint);
+//        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+//        http.setRequestMethod(method);
+//
+//        if (serverFacade.getAuth() != null) {
+//            http.addRequestProperty("authorization", serverFacade.getAuth());
+//        }
+//
+//        if (!Objects.equals(body, null)) {
+//            http.setDoOutput(true);
+//            http.addRequestProperty("Content-Type", "application/json");
+//            try (var outputStream = http.getOutputStream()) {
+//                outputStream.write(body.getBytes());
+//            }
+//        }
+//
+//        http.connect();
+//        return http;
+//    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         Map result;
@@ -51,13 +109,15 @@ public class Communicator {
             URL url = (new URI(serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
-            http.setDoOutput(true);
 
             if (serverFacade.getAuth() != null) {
                 http.addRequestProperty("Authorization", serverFacade.getAuth());
             }
 
-            writeBody(request, http);
+            if (request != null) {
+                http.setDoOutput(true);
+                writeBody(request, http);
+            }
 
             http.connect();
             throwIfNotSuccessful(http);
