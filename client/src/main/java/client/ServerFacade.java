@@ -7,9 +7,18 @@ import model.UserData;
 
 public class ServerFacade {
     private Communicator communicator;
+    private String authToken;
 
     public ServerFacade(String serverURL) {
         communicator = new Communicator(this, serverURL);
+    }
+
+    void setAuth(String authToken) {
+        this.authToken = authToken;
+    }
+
+    String getAuth() {
+        return authToken;
     }
 
     public void register(UserData user) throws ResponseException {
@@ -22,9 +31,9 @@ public class ServerFacade {
         communicator.login("POST", path, user);
     }
 
-    public void logout(UserData user) throws ResponseException {
+    public void logout() throws ResponseException {
         var path = "/session";
-        communicator.logout("POST", path, user);
+        communicator.logout("POST", path);
     }
 
 //    public Object listgames(GameData game) throws ResponseException {

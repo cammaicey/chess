@@ -1,5 +1,11 @@
 package ui;
 
+import client.ServerFacade;
+import exception.ResponseException;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -8,8 +14,14 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class REPL {
+    private UserData userData;
+    private AuthData authData;
+    private GameData gameData;
+    String serverURL;
+    ServerFacade server;
 
-    public REPL() {
+    public REPL(String serverURL) {
+        server = new ServerFacade(serverURL);
     }
 
     public void run() {
@@ -26,11 +38,12 @@ public class REPL {
 
             if (Objects.equals(line, "1")) {
                 menuRegister(out, scanner);
-                //call register
+                out.println("Successfully logged in.\n");
                 loggedIn = true;
             }
             else if (Objects.equals(line, "2")) {
                 menuLogin(out, scanner);
+                out.println("Successfully logged in.\n");
                 loggedIn = true;
             }
             else if (Objects.equals(line, "3")) {
@@ -51,7 +64,13 @@ public class REPL {
             postlogin(out);
             String line = scanner.nextLine();
             if (Objects.equals(line, "1")) {
-                loggedIn = false;
+                try {
+                    server.logout();
+                    out.println("Successfully logged out.\n");
+                    loggedIn = false;
+                } catch (ResponseException e) {
+                    throw new RuntimeException(e);
+                }
             }
             else if (Objects.equals(line, "2")) {
                 out.println("Please enter a name for your game.");
@@ -89,18 +108,30 @@ public class REPL {
 
     private void menuRegister (PrintStream out, Scanner scanner) {
         out.println("Please enter a username.");
-        scanner.nextLine();
+        String username = scanner.nextLine();
         out.println("Please enter and email address.");
-        scanner.nextLine();
+        String email = scanner.nextLine();
         out.println("Please enter a password.");
-        scanner.nextLine();
+        String password = scanner.nextLine();
+        userData = new UserData(username, password, email);
+        try {
+            server.register(userData);
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void menuLogin (PrintStream out, Scanner scanner) {
         out.println("Please enter your username.");
-        scanner.nextLine();
+        String username = scanner.nextLine();
         out.println("Please enter your password.");
-        scanner.nextLine();
+        String password = scanner.nextLine();
+        userData = new UserData(username, password, "");
+        try {
+            server.login(userData);
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void postlogin(PrintStream out) {
