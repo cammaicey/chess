@@ -52,8 +52,8 @@ public class Communicator {
     }
 
     public void joingame(String action, String path, JoinData join) throws ResponseException {
-        var result = this.makeRequest(action, path, join, Map.class);
-        //serverFacade.setGameID((Integer) result.get("gameID"));
+        Map requestData = Map.of("playerColor", join.playerColor(), "gameID", join.gameID());
+        this.makeRequest(action, path, requestData, null);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {

@@ -11,14 +11,16 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import static ui.EscapeSequences.*;
 
 public class REPL {
     private UserData userData;
     private JoinData joinData;
-    String serverURL;
     ServerFacade client;
-    DrawBoard drawBoard;
+    Map<Integer, Integer> allGames = new HashMap<>();
 
     public REPL(String serverURL) {
         client = new ServerFacade(serverURL);
@@ -91,6 +93,8 @@ public class REPL {
                         out.println("\tWhite Player: " + game.whiteUsername());
                         out.println("\tBlack Player: " + game.blackUsername());
                         new DrawBoard(new ChessGame()).drawBoard();
+                        out.println("\t");
+                        allGames.put(num, game.gameID());
                         num++;
                     }
                 } catch (ResponseException e) {
@@ -99,10 +103,15 @@ public class REPL {
             }
             else if (Objects.equals(line, "4")) {
                 out.println("Please enter the number of the game you wish to join.");
-                scanner.nextLine();
-                out.println("What color do you wish to be?");
-                scanner.nextLine();
-                //join based on input
+                String number = scanner.nextLine();
+                out.println("What color do you wish to be? Enter WHITE or BLACK.");
+                String color = scanner.nextLine();
+                joinData = new JoinData(color, allGames.get(Integer.parseInt(number)));
+                try {
+                    client.joingame(joinData);
+                } catch (ResponseException e) {
+                    throw new RuntimeException(e);
+                }
             }
             else if (Objects.equals(line, "5")) {
                 out.println("Please enter the number of the game you wish to observe.");

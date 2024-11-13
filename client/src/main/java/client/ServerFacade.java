@@ -52,6 +52,6 @@ public class ServerFacade {
 
     public void joingame(JoinData join) throws ResponseException {
         var path = "/game";
-        communicator.joingame("POST", path, join);
+        communicator.joingame("PUT", path, join);
     }
 }
