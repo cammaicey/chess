@@ -26,12 +26,10 @@ public class REPL {
         client = new ServerFacade(serverURL);
     }
 
-    public void run() {
+    public void run() throws ResponseException {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
-
         boolean loggedIn = false;
-
         Scanner scanner = new Scanner(System.in);
 
         while (!loggedIn) {
@@ -66,39 +64,26 @@ public class REPL {
             postlogin(out);
             String line = scanner.nextLine();
             if (Objects.equals(line, "1")) {
-                try {
-                    client.logout();
-                    run();
-                } catch (ResponseException e) {
-                    throw new RuntimeException(e);
-                }
+                client.logout();
+                run();
             }
             else if (Objects.equals(line, "2")) {
                 out.println("Please enter a name for your game.");
                 String name = scanner.nextLine();
-                try {
-                    client.creategame(name);
-                } catch (ResponseException e) {
-                    throw new RuntimeException(e);
-                }
+                client.creategame(name);
             }
             else if (Objects.equals(line, "3")) {
-                try {
-                    int num = 1;
-                    ListData list = client.listgames();
-                    HashSet<GameData> games = list.games();
-                    //for loop
-                    for (GameData game : games) {
-                        out.println(num + ". " + game.gameName());
-                        out.println("\tWhite Player: " + game.whiteUsername());
-                        out.println("\tBlack Player: " + game.blackUsername());
-                        new DrawBoard(new ChessGame()).drawBoard();
-                        out.println("\t");
-                        allGames.put(num, game.gameID());
-                        num++;
-                    }
-                } catch (ResponseException e) {
-                    throw new RuntimeException(e);
+                int num = 1;
+                HashSet<GameData> games = client.listgames().games();
+
+                for (GameData game : games) {
+                    out.println(num + ". " + game.gameName());
+                    out.println("\tWhite Player: " + game.whiteUsername());
+                    out.println("\tBlack Player: " + game.blackUsername());
+                    new DrawBoard(new ChessGame()).drawBoard();
+                    out.println("\t");
+                    allGames.put(num, game.gameID());
+                    num++;
                 }
             }
             else if (Objects.equals(line, "4")) {
@@ -107,11 +92,7 @@ public class REPL {
                 out.println("What color do you wish to be? Enter WHITE or BLACK.");
                 String color = scanner.nextLine();
                 joinData = new JoinData(color, allGames.get(Integer.parseInt(number)));
-                try {
-                    client.joingame(joinData);
-                } catch (ResponseException e) {
-                    throw new RuntimeException(e);
-                }
+                client.joingame(joinData);
             }
             else if (Objects.equals(line, "5")) {
                 out.println("Please enter the number of the game you wish to observe.");
