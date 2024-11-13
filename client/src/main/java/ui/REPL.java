@@ -1,19 +1,15 @@
 package ui;
 
+import chess.ChessGame;
 import client.ServerFacade;
 import exception.ResponseException;
-import model.AuthData;
-import model.GameData;
-import model.JoinData;
-import model.UserData;
+import model.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 import static ui.EscapeSequences.*;
 
@@ -22,6 +18,7 @@ public class REPL {
     private JoinData joinData;
     String serverURL;
     ServerFacade client;
+    DrawBoard drawBoard;
 
     public REPL(String serverURL) {
         client = new ServerFacade(serverURL);
@@ -85,7 +82,17 @@ public class REPL {
             }
             else if (Objects.equals(line, "3")) {
                 try {
-                    client.listgames();
+                    int num = 1;
+                    ListData list = client.listgames();
+                    HashSet<GameData> games = list.games();
+                    //for loop
+                    for (GameData game : games) {
+                        out.println(num + ". " + game.gameName());
+                        out.println("\tWhite Player: " + game.whiteUsername());
+                        out.println("\tBlack Player: " + game.blackUsername());
+                        new DrawBoard(new ChessGame()).drawBoard();
+                        num++;
+                    }
                 } catch (ResponseException e) {
                     throw new RuntimeException(e);
                 }

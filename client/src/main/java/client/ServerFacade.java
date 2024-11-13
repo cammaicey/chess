@@ -3,6 +3,7 @@ package client;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.JoinData;
+import model.ListData;
 import model.UserData;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class ServerFacade {
         communicator.logout("DELETE", path);
     }
 
-    public Object listgames() throws ResponseException {
+    public ListData listgames() throws ResponseException {
         var path = "/game";
         return communicator.listgames("GET", path);
     }

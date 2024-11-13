@@ -1,10 +1,9 @@
 package client;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import exception.ResponseException;
-import model.GameData;
 import model.JoinData;
+import model.ListData;
 import model.UserData;
 
 import java.io.IOException;
@@ -43,68 +42,23 @@ public class Communicator {
 
     public void creategame(String action, String path, String gameName) throws ResponseException {
         Map<String, String> requestData = Map.of("gameName", gameName);
-        this.makeRequest(action, path, requestData, Map.class);
+        this.makeRequest(action, path, requestData, null);
     }
 
-    public Map listgames(String action, String path) throws ResponseException {
-        Map games = this.makeRequest(action, path, null, Map.class);
-        return games;
+    public ListData listgames(String action, String path) throws ResponseException {
+        String games = this.makeRequest(action, path, null, null);
+        var json = new Gson().fromJson(games, ListData.class);
+        return json;
     }
 
     public void joingame(String action, String path, JoinData join) throws ResponseException {
         var result = this.makeRequest(action, path, join, Map.class);
-        serverFacade.setGameID((Integer) result.get("gameID"));
+        //serverFacade.setGameID((Integer) result.get("gameID"));
     }
 
-//    private Map request(String method, String endpoint, String body) {
-//        Map respMap;
-//        try {
-//            HttpURLConnection http = makeConnection(method, endpoint, body);
-//
-//            try {
-//                if (http.getResponseCode() == 401) {
-//                    return Map.of("Error", 401);
-//                }
-//            } catch (IOException e) {
-//                return Map.of("Error", 401);
-//            }
-//
-//
-//            try (InputStream respBody = http.getInputStream()) {
-//                InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-//                respMap = new Gson().fromJson(inputStreamReader, Map.class);
-//            }
-//
-//        } catch (URISyntaxException | IOException e) {
-//            return Map.of("Error", e.getMessage());
-//        }
-//
-//        return respMap;
-//    }
-//
-//    private HttpURLConnection makeConnection(String method, String endpoint, String body) throws URISyntaxException, IOException {
-//        URI uri = new URI(serverURL + endpoint);
-//        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
-//        http.setRequestMethod(method);
-//
-//        if (serverFacade.getAuth() != null) {
-//            http.addRequestProperty("authorization", serverFacade.getAuth());
-//        }
-//
-//        if (!Objects.equals(body, null)) {
-//            http.setDoOutput(true);
-//            http.addRequestProperty("Content-Type", "application/json");
-//            try (var outputStream = http.getOutputStream()) {
-//                outputStream.write(body.getBytes());
-//            }
-//        }
-//
-//        http.connect();
-//        return http;
-//    }
-
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
-        Map result;
+        String result;
+        Map mapResult;
         try {
             URL url = (new URI(serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -121,11 +75,22 @@ public class Communicator {
 
             http.connect();
             throwIfNotSuccessful(http);
-            try (InputStream body = http.getInputStream()) {
-                InputStreamReader inputStreamReader = new InputStreamReader(body);
-                result = new Gson().fromJson(inputStreamReader, Map.class);
+
+            if (method.equals("GET")) {
+                try (InputStream respBody = http.getInputStream()) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+                    result = reader(inputStreamReader);
+                    return (T) result;
+                }
             }
-            return (T) result;
+
+            else {
+                try (InputStream body = http.getInputStream()) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(body);
+                    mapResult = new Gson().fromJson(inputStreamReader, Map.class);
+                    return (T) mapResult;
+                }
+            }
         } catch (Exception ex) {
             throw new ResponseException(500, ex.getMessage());
         }
@@ -142,6 +107,19 @@ public class Communicator {
         }
     }
 
+    private String reader(InputStreamReader reader) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            for (int ch; (ch = reader.read()) != -1; ) {
+                sb.append((char) ch);
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            return "";
+        }
+
+    }
+
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
@@ -149,18 +127,18 @@ public class Communicator {
         }
     }
 
-//    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
-//        T response = null;
-//        if (http.getContentLength() < 0) {
-//            try (InputStream respBody = http.getInputStream()) {
-//                InputStreamReader reader = new InputStreamReader(respBody);
-//                if (responseClass != null) {
-//                    response = new Gson().fromJson(reader, responseClass);
-//                }
-//            }
-//        }
-//        return response;
-//    }
+    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
+        T response = null;
+        if (http.getContentLength() < 0) {
+            try (InputStream respBody = http.getInputStream()) {
+                InputStreamReader reader = new InputStreamReader(respBody);
+                if (responseClass != null) {
+                    response = new Gson().fromJson(reader, responseClass);
+                }
+            }
+        }
+        return response;
+    }
 
 
     private boolean isSuccessful(int status) {
