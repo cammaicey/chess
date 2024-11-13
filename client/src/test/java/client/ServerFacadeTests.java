@@ -36,9 +36,9 @@ public class ServerFacadeTests {
         }
         gameService = new GameService(gameDAO, authDAO);
         userService = new UserService(userDAO, authDAO);
-        var port = server.run(8080);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade("http://localhost:8080");
+        facade = new ServerFacade("http://localhost:" + port);
     }
 
     @AfterAll
