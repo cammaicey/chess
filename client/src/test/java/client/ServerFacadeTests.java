@@ -124,8 +124,9 @@ public class ServerFacadeTests {
         user = new UserData("test", "what a good password", "wow@gmail.com");
         Assertions.assertDoesNotThrow(() -> facade.register(user));
         Assertions.assertDoesNotThrow(() -> facade.login(user));
-        Assertions.assertDoesNotThrow(() -> facade.creategame("gg"));
-        join = new JoinData("WHITE", 1);
+        int gameID = facade.creategame("gg");
+        Assertions.assertDoesNotThrow(() -> facade.listgames());
+        join = new JoinData("WHITE", gameID);
         Assertions.assertDoesNotThrow(() -> facade.joingame(join));
     }
 

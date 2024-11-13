@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 public class ServerFacade {
     private Communicator communicator;
     String auth;
+    int gameID;
 
     public ServerFacade(String serverURL) {
         communicator = new Communicator(this, serverURL);
@@ -23,6 +24,14 @@ public class ServerFacade {
 
     public String getAuth() {
         return auth;
+    }
+
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
+    public int getGameID() {
+        return gameID;
     }
 
     public void register(UserData user) throws ResponseException {
@@ -45,9 +54,10 @@ public class ServerFacade {
         return communicator.listgames("GET", path);
     }
 
-    public void creategame(String name) throws ResponseException {
+    public int creategame(String name) throws ResponseException {
         var path = "/game";
         communicator.creategame("POST", path, name);
+        return gameID;
     }
 
     public void joingame(JoinData join) throws ResponseException {

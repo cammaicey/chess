@@ -41,8 +41,11 @@ public class Communicator {
     }
 
     public void creategame(String action, String path, String gameName) throws ResponseException {
-        Map<String, String> requestData = Map.of("gameName", gameName);
-        this.makeRequest(action, path, requestData, null);
+        Map requestData = Map.of("gameName", gameName);
+        var result = this.makeRequest(action, path, requestData, Map.class);
+        Number numID = (Number) result.get("gameID");
+        int id = numID.intValue();
+        serverFacade.setGameID(id);
     }
 
     public ListData listgames(String action, String path) throws ResponseException {
