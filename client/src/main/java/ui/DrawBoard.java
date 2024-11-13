@@ -43,6 +43,7 @@ public class DrawBoard {
 
         drawHeader(out, true);
 
+        out.print(RESET_TEXT_COLOR);
     }
 
     private void drawHeader(PrintStream out, boolean reverse) {
