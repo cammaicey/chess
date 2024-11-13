@@ -108,12 +108,12 @@ public class Communicator {
     }
 
     private String reader(InputStreamReader reader) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         try {
             for (int ch; (ch = reader.read()) != -1; ) {
-                sb.append((char) ch);
+                stringBuilder.append((char) ch);
             }
-            return sb.toString();
+            return stringBuilder.toString();
         } catch (IOException e) {
             return "";
         }
@@ -125,19 +125,6 @@ public class Communicator {
         if (!isSuccessful(status)) {
             throw new ResponseException(status, "failure: " + status);
         }
-    }
-
-    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
-        T response = null;
-        if (http.getContentLength() < 0) {
-            try (InputStream respBody = http.getInputStream()) {
-                InputStreamReader reader = new InputStreamReader(respBody);
-                if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
-                }
-            }
-        }
-        return response;
     }
 
 
