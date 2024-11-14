@@ -74,7 +74,6 @@ public class REPL {
                         out.println(num + ". " + game.gameName());
                         out.println("\tWhite Player: " + game.whiteUsername());
                         out.println("\tBlack Player: " + game.blackUsername());
-                        new DrawBoard(new ChessGame()).drawBoard();
                         out.println("\t");
                         allGames.put(num, game.gameID());
                         num++;
@@ -94,7 +93,7 @@ public class REPL {
                     observeGame(out, scanner);
                 } else if (Objects.equals(line, "6")) {
                     out.println("Press 1 to logout and return to the previous menu.");
-                    out.println("Press 2 to creat a new game.");
+                    out.println("Press 2 to create a new game.");
                     out.println("Press 3 to list all games.");
                     out.println("Press 4 to join a game.");
                     out.println("Press 5 to observe a game.\n");
@@ -109,7 +108,7 @@ public class REPL {
                     out.println("Bad request.\n");
                     break;
                 case 401:
-                    out.println("Unauthorized.\n");
+                    out.println("Unauthorized username or password.\n");
                     break;
                 case 403:
                     out.println("Already taken.\n");
@@ -134,7 +133,7 @@ public class REPL {
             out.println("Please enter a username.");
             username = scanner.nextLine();
         }
-        out.println("Please enter and email address.");
+        out.println("Please enter an email address.");
         String email = scanner.nextLine();
         while (email.isEmpty()) {
             out.println("Please enter an email address.");
@@ -178,7 +177,7 @@ public class REPL {
         } catch (ResponseException e) {
             int status = e.statusCode();
             if (status == 401) {
-                out.println("Unauthorized.\n");
+                out.println("Unauthorized username or password.\n");
                 return false;
             }
         }
@@ -198,9 +197,28 @@ public class REPL {
     private void joinGame(PrintStream out, Scanner scanner) throws ResponseException, IOException {
         out.println("Please enter the number of the game you wish to join.");
         String number = scanner.nextLine();
-        if (!allGames.containsKey(Integer.parseInt(number))) {
-            out.println("Invalid game number.");
-            joinGame(out, scanner);
+        boolean isNumeric = true;
+
+        while (true) {
+            for (int i = 0; i < number.length(); i++) {
+                if (!Character.isDigit(number.charAt(i))) {
+                    isNumeric = false;
+                }
+            }
+            if (!isNumeric) {
+                out.println("Invalid game number.\nPlease enter the number of the game you wish to observe.");
+                number = scanner.nextLine();
+                isNumeric = true;
+                continue;
+            }
+            if (!allGames.containsKey(Integer.parseInt(number))) {
+                out.println("Invalid game number.\nPlease enter the number of the game you wish to observe.");
+                number = scanner.nextLine();
+                continue;
+            }
+            else {
+                break;
+            }
         }
         out.println("What color do you wish to be? Enter WHITE or BLACK.");
         String color = scanner.nextLine();
@@ -213,16 +231,35 @@ public class REPL {
         }
         joinData = new JoinData(color, allGames.get(Integer.parseInt(number)));
         client.joingame(joinData);
+        new DrawBoard(new ChessGame()).drawBoard();
     }
 
     private void observeGame(PrintStream out, Scanner scanner) {
         out.println("Please enter the number of the game you wish to observe.");
         String number = scanner.nextLine();
-        if (!allGames.containsKey(Integer.parseInt(number))) {
-            out.println("Invalid game number.\n");
-            observeGame(out, scanner);
+        boolean isNumeric = true;
+        while (true) {
+            for (int i = 0; i < number.length(); i++) {
+                if (!Character.isDigit(number.charAt(i))) {
+                    isNumeric = false;
+                }
+            }
+            if (!isNumeric) {
+                out.println("Invalid game number.\nPlease enter the number of the game you wish to observe.");
+                number = scanner.nextLine();
+                isNumeric = true;
+                continue;
+            }
+            if (!allGames.containsKey(Integer.parseInt(number))) {
+                out.println("Invalid game number.\nPlease enter the number of the game you wish to observe.");
+                number = scanner.nextLine();
+                continue;
+            }
+            else {
+                new DrawBoard(new ChessGame()).drawBoard();
+                break;
+            }
         }
-        new DrawBoard(new ChessGame()).drawBoard();
     }
 
 }
