@@ -25,7 +25,7 @@ public class Communicator {
         this.serverFacade = facade;
     }
 
-    public void register(String action, String path, UserData user) throws ResponseException {
+    public void register(String action, String path, UserData user) throws ResponseException, IOException {
         var result = this.makeRequest(action, path, user, Map.class);
         serverFacade.setAuth((String) result.get("authToken"));
     }
@@ -35,12 +35,12 @@ public class Communicator {
         serverFacade.setAuth((String) result.get("authToken"));
     }
 
-    public void logout(String action, String path) throws ResponseException {
+    public void logout(String action, String path) throws ResponseException, IOException {
         this.makeRequest(action, path, null, Map.class);
         serverFacade.setAuth(null);
     }
 
-    public void creategame(String action, String path, String gameName) throws ResponseException {
+    public void creategame(String action, String path, String gameName) throws ResponseException, IOException {
         Map requestData = Map.of("gameName", gameName);
         var result = this.makeRequest(action, path, requestData, Map.class);
         Number numID = (Number) result.get("gameID");
@@ -48,23 +48,24 @@ public class Communicator {
         serverFacade.setGameID(id);
     }
 
-    public ListData listgames(String action, String path) throws ResponseException {
+    public ListData listgames(String action, String path) throws ResponseException, IOException {
         String games = this.makeRequest(action, path, null, null);
         var json = new Gson().fromJson(games, ListData.class);
         return json;
     }
 
-    public void joingame(String action, String path, JoinData join) throws ResponseException {
+    public void joingame(String action, String path, JoinData join) throws ResponseException, IOException {
         Map requestData = Map.of("playerColor", join.playerColor(), "gameID", join.gameID());
         this.makeRequest(action, path, requestData, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException, IOException {
         String result;
         Map mapResult;
+        HttpURLConnection http = null;
         try {
             URL url = (new URI(serverURL + path)).toURL();
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
 
             if (serverFacade.getAuth() != null) {
@@ -95,6 +96,9 @@ public class Communicator {
                 }
             }
         } catch (Exception ex) {
+            if (http != null) {
+                throw new ResponseException(http.getResponseCode(), ex.getMessage());
+            }
             throw new ResponseException(500, ex.getMessage());
         }
     }
@@ -125,8 +129,9 @@ public class Communicator {
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
+        var message = http.getResponseMessage();
         if (!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
+            throw new ResponseException(status, message);
         }
     }
 

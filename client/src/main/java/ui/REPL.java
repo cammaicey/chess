@@ -27,7 +27,7 @@ public class REPL {
         client = new ServerFacade(serverURL);
     }
 
-    public void run() throws ResponseException {
+    public void run() throws ResponseException, IOException, URISyntaxException {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
         boolean loggedIn = false;
@@ -39,13 +39,9 @@ public class REPL {
                 String line = scanner.nextLine();
 
                 if (Objects.equals(line, "1")) {
-                    menuRegister(out, scanner);
-                    out.println("Successfully logged in.\n");
-                    loggedIn = true;
+                    loggedIn = menuRegister(out, scanner);
                 } else if (Objects.equals(line, "2")) {
-                    menuLogin(out, scanner);
-                    out.println("Successfully logged in.\n");
-                    loggedIn = true;
+                    loggedIn = menuLogin(out, scanner);
                 } else if (Objects.equals(line, "3")) {
                     out.println("Press 1 to register as a new user.");
                     out.println("Press 2 to login as an existing user.");
@@ -107,7 +103,18 @@ public class REPL {
                 }
             }
         } catch (ResponseException e) {
-            out.println(e.statusCode() + e.getMessage());
+            int status = e.statusCode();
+            switch (status) {
+                case 400:
+                    out.println("Bad request.");
+                    break;
+                case 401:
+                    out.println("Unauthorized.");
+                    break;
+                case 403:
+                    out.println("Already taken.");
+                    break;
+            }
         }
 
     }
@@ -120,7 +127,7 @@ public class REPL {
         out.println("\t4. Quit");
     }
 
-    private void menuRegister (PrintStream out, Scanner scanner) {
+    private boolean menuRegister (PrintStream out, Scanner scanner) throws IOException {
         out.println("Please enter a username.");
         String username = scanner.nextLine();
         while (username.isEmpty()) {
@@ -142,12 +149,25 @@ public class REPL {
         userData = new UserData(username, password, email);
         try {
             client.register(userData);
+            return true;
         } catch (ResponseException e) {
-            throw new RuntimeException(e);
+            int status = e.statusCode();
+            switch (status) {
+                case 400:
+                    out.println("Bad request.");
+                    break;
+                case 401:
+                    out.println("Unauthorized.");
+                    break;
+                case 403:
+                    out.println("Already taken.");
+                    break;
+            }
+            return false;
         }
     }
 
-    private void menuLogin (PrintStream out, Scanner scanner) {
+    private boolean menuLogin (PrintStream out, Scanner scanner) throws ResponseException, URISyntaxException, IOException {
         out.println("Please enter your username.");
         String username = scanner.nextLine();
         out.println("Please enter your password.");
@@ -155,9 +175,14 @@ public class REPL {
         userData = new UserData(username, password, "");
         try {
             client.login(userData);
-        } catch (ResponseException | URISyntaxException | IOException e) {
-            throw new RuntimeException(e);
+        } catch (ResponseException e) {
+            int status = e.statusCode();
+            if (status == 401) {
+                out.println("Unauthorized.");
+                return false;
+            }
         }
+        return true;
     }
 
     private void postlogin(PrintStream out) {
@@ -170,7 +195,7 @@ public class REPL {
         out.println("\t6. Help");
     }
 
-    private void joinGame(PrintStream out, Scanner scanner) throws ResponseException {
+    private void joinGame(PrintStream out, Scanner scanner) throws ResponseException, IOException {
         out.println("Please enter the number of the game you wish to join.");
         String number = scanner.nextLine();
         if (!allGames.containsKey(Integer.parseInt(number))) {

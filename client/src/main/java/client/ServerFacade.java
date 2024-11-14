@@ -34,7 +34,7 @@ public class ServerFacade {
         return gameID;
     }
 
-    public void register(UserData user) throws ResponseException {
+    public void register(UserData user) throws ResponseException, IOException {
         var path = "/user";
         communicator.register("POST", path, user);
     }
@@ -44,23 +44,23 @@ public class ServerFacade {
         communicator.login("POST", path, user);
     }
 
-    public void logout() throws ResponseException {
+    public void logout() throws ResponseException, IOException {
         var path = "/session";
         communicator.logout("DELETE", path);
     }
 
-    public ListData listgames() throws ResponseException {
+    public ListData listgames() throws ResponseException, IOException {
         var path = "/game";
         return communicator.listgames("GET", path);
     }
 
-    public int creategame(String name) throws ResponseException {
+    public int creategame(String name) throws ResponseException, IOException {
         var path = "/game";
         communicator.creategame("POST", path, name);
         return gameID;
     }
 
-    public void joingame(JoinData join) throws ResponseException {
+    public void joingame(JoinData join) throws ResponseException, IOException {
         var path = "/game";
         communicator.joingame("PUT", path, join);
     }
