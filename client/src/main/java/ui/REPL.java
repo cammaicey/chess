@@ -33,86 +33,71 @@ public class REPL {
         boolean loggedIn = false;
         Scanner scanner = new Scanner(System.in);
 
-        try {
-            while (!loggedIn) {
-                prelogin(out);
-                String line = scanner.nextLine();
+        while (!loggedIn) {
+            prelogin(out);
+            String line = scanner.nextLine();
 
-                if (Objects.equals(line, "1")) {
-                    loggedIn = menuRegister(out, scanner);
-                } else if (Objects.equals(line, "2")) {
-                    loggedIn = menuLogin(out, scanner);
-                } else if (Objects.equals(line, "3")) {
-                    out.println("Press 1 to register as a new user.");
-                    out.println("Press 2 to login as an existing user.");
-                    out.println("Press 3 to exit the program.\n");
-                } else if (Objects.equals(line, "4")) {
-                    out.println("Goodbye!");
-                    out.close();
-                    System.exit(0);
-                } else {
-                    out.println("Invalid selection.\n");
-                }
+            if (Objects.equals(line, "1")) {
+                loggedIn = menuRegister(out, scanner);
+            } else if (Objects.equals(line, "2")) {
+                loggedIn = menuLogin(out, scanner);
+            } else if (Objects.equals(line, "3")) {
+                out.println("Press 1 to register as a new user.");
+                out.println("Press 2 to login as an existing user.");
+                out.println("Press 3 to exit the program.\n");
+            } else if (Objects.equals(line, "4")) {
+                out.println("Goodbye!");
+                out.close();
+                System.exit(0);
+            } else {
+                out.println("Invalid selection.\n");
             }
-            while (loggedIn) {
-                postlogin(out);
-                String line = scanner.nextLine();
-                if (Objects.equals(line, "1")) {
-                    loggedIn = false;
-                    listed = false;
-                    client.logout();
-                    run();
-                } else if (Objects.equals(line, "2")) {
-                    out.println("Please enter a name for your game.");
-                    String name = scanner.nextLine();
-                    client.creategame(name);
-                } else if (Objects.equals(line, "3")) {
-                    int num = 1;
-                    HashSet<GameData> games = client.listgames().games();
+        }
+        while (loggedIn) {
+            postlogin(out);
+            String line = scanner.nextLine();
+            if (Objects.equals(line, "1")) {
+                loggedIn = false;
+                listed = false;
+                client.logout();
+                run();
+            } else if (Objects.equals(line, "2")) {
+                out.println("Please enter a name for your game.");
+                String name = scanner.nextLine();
+                client.creategame(name);
+            } else if (Objects.equals(line, "3")) {
+                int num = 1;
+                HashSet<GameData> games = client.listgames().games();
 
-                    for (GameData game : games) {
-                        out.println(num + ". " + game.gameName());
-                        out.println("\tWhite Player: " + game.whiteUsername());
-                        out.println("\tBlack Player: " + game.blackUsername());
-                        out.println("\t");
-                        allGames.put(num, game.gameID());
-                        num++;
-                    }
-                    listed = true;
-                } else if (Objects.equals(line, "4")) {
-                    if (!listed) {
-                        out.println("\nPlease list the games first.\n");
-                        continue;
-                    }
-                    joinGame(out, scanner);
-                } else if (Objects.equals(line, "5")) {
-                    if (!listed) {
-                        out.println("\nPlease list the games first.\n");
-                        continue;
-                    }
-                    observeGame(out, scanner);
-                } else if (Objects.equals(line, "6")) {
-                    out.println("Press 1 to logout and return to the previous menu.");
-                    out.println("Press 2 to create a new game.");
-                    out.println("Press 3 to list all games.");
-                    out.println("Press 4 to join a game.");
-                    out.println("Press 5 to observe a game.\n");
-                } else {
-                    out.println("Invalid selection.\n");
+                for (GameData game : games) {
+                    out.println(num + ". " + game.gameName());
+                    out.println("\tWhite Player: " + game.whiteUsername());
+                    out.println("\tBlack Player: " + game.blackUsername());
+                    out.println("\t");
+                    allGames.put(num, game.gameID());
+                    num++;
                 }
-            }
-        } catch (ResponseException e) {
-            int status = e.statusCode();
-            switch (status) {
-                case 400:
-                    out.println("Bad request.\n");
-                    break;
-                case 401:
-                    out.println("Unauthorized username or password.\n");
-                    break;
-                case 403:
-                    out.println("Already taken.\n");
-                    break;
+                listed = true;
+            } else if (Objects.equals(line, "4")) {
+                if (!listed) {
+                    out.println("\nPlease list the games first.\n");
+                    continue;
+                }
+                joinGame(out, scanner);
+            } else if (Objects.equals(line, "5")) {
+                if (!listed) {
+                    out.println("\nPlease list the games first.\n");
+                    continue;
+                }
+                observeGame(out, scanner);
+            } else if (Objects.equals(line, "6")) {
+                out.println("Press 1 to logout and return to the previous menu.");
+                out.println("Press 2 to create a new game.");
+                out.println("Press 3 to list all games.");
+                out.println("Press 4 to join a game.");
+                out.println("Press 5 to observe a game.\n");
+            } else {
+                out.println("Invalid selection.\n");
             }
         }
 
@@ -230,8 +215,23 @@ public class REPL {
             color = scanner.nextLine();
         }
         joinData = new JoinData(color, allGames.get(Integer.parseInt(number)));
-        client.joingame(joinData);
-        new DrawBoard(new ChessGame()).drawBoard();
+        try {
+            client.joingame(joinData);
+            new DrawBoard(new ChessGame()).drawBoard();
+        } catch (ResponseException e) {
+            int status = e.statusCode();
+            switch (status) {
+                case 400:
+                    out.println("Bad request.\n");
+                    break;
+                case 401:
+                    out.println("Unauthorized username or password.\n");
+                    break;
+                case 403:
+                    out.println("Already taken.\n");
+                    break;
+            }
+        }
     }
 
     private void observeGame(PrintStream out, Scanner scanner) {
