@@ -101,7 +101,7 @@ public class REPL {
                     out.println("Press 2 to creat a new game.");
                     out.println("Press 3 to list all games.");
                     out.println("Press 4 to join a game.");
-                    out.println("Press 5 to observe a game.");
+                    out.println("Press 5 to observe a game.\n");
                 } else {
                     out.println("Invalid selection.\n");
                 }
@@ -173,8 +173,19 @@ public class REPL {
     private void joinGame(PrintStream out, Scanner scanner) throws ResponseException {
         out.println("Please enter the number of the game you wish to join.");
         String number = scanner.nextLine();
+        if (!allGames.containsKey(Integer.parseInt(number))) {
+            out.println("Invalid game number.");
+            joinGame(out, scanner);
+        }
         out.println("What color do you wish to be? Enter WHITE or BLACK.");
         String color = scanner.nextLine();
+        while (true) {
+            if (Objects.equals(color, "WHITE") || Objects.equals(color, "BLACK")) {
+                break;
+            }
+            out.println("Invalid color. Enter WHITE or BLACK.");
+            color = scanner.nextLine();
+        }
         joinData = new JoinData(color, allGames.get(Integer.parseInt(number)));
         client.joingame(joinData);
     }
