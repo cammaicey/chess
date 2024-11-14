@@ -185,19 +185,17 @@ public class REPL {
         while (true) {
             isNumeric = checkNonNumeric(number);
             if (!isNumeric) {
-                out.println("Invalid game number.\nPlease enter the number of the game you wish to observe.");
+                out.println("Invalid game number.\nPlease enter the number of the game you wish to join.");
                 number = scanner.nextLine();
                 isNumeric = true;
                 continue;
             }
             if (!allGames.containsKey(Integer.parseInt(number))) {
-                out.println("Invalid game number.\nPlease enter the number of the game you wish to observe.");
+                out.println("Invalid game number.\nPlease enter the number of the game you wish to join.");
                 number = scanner.nextLine();
                 continue;
             }
-            else {
-                break;
-            }
+            break;
         }
         out.println("What color do you wish to be? Enter WHITE or BLACK.");
         String color = scanner.nextLine();
@@ -245,10 +243,8 @@ public class REPL {
                 number = scanner.nextLine();
                 continue;
             }
-            else {
-                new DrawBoard(new ChessGame()).drawBoard();
-                break;
-            }
+            new DrawBoard(new ChessGame()).drawBoard();;
+            break;
         }
     }
 
