@@ -100,7 +100,6 @@ public class REPL {
                 out.println("Invalid selection.\n");
             }
         }
-
     }
 
     private void prelogin(PrintStream out) {
@@ -183,13 +182,8 @@ public class REPL {
         out.println("Please enter the number of the game you wish to join.");
         String number = scanner.nextLine();
         boolean isNumeric = true;
-
         while (true) {
-            for (int i = 0; i < number.length(); i++) {
-                if (!Character.isDigit(number.charAt(i))) {
-                    isNumeric = false;
-                }
-            }
+            isNumeric = checkNonNumeric(number);
             if (!isNumeric) {
                 out.println("Invalid game number.\nPlease enter the number of the game you wish to observe.");
                 number = scanner.nextLine();
@@ -239,11 +233,7 @@ public class REPL {
         String number = scanner.nextLine();
         boolean isNumeric = true;
         while (true) {
-            for (int i = 0; i < number.length(); i++) {
-                if (!Character.isDigit(number.charAt(i))) {
-                    isNumeric = false;
-                }
-            }
+            isNumeric = checkNonNumeric(number);
             if (!isNumeric) {
                 out.println("Invalid game number.\nPlease enter the number of the game you wish to observe.");
                 number = scanner.nextLine();
@@ -260,6 +250,15 @@ public class REPL {
                 break;
             }
         }
+    }
+
+    public boolean checkNonNumeric(String number) {
+        for (int i = 0; i < number.length(); i++) {
+            if (!Character.isDigit(number.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
