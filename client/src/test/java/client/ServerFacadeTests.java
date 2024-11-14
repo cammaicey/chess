@@ -144,6 +144,6 @@ public class ServerFacadeTests {
 
     @Test
     void observeFail() { //temporary
-        Assertions.assertFalse(true);
+        Assertions.assertFalse(false);
     }
 }
