@@ -82,13 +82,13 @@ public class REPL {
                     listed = true;
                 } else if (Objects.equals(line, "4")) {
                     if (!listed) {
-                        out.println("Please list the games first.");
+                        out.println("\nPlease list the games first.\n");
                         continue;
                     }
                     joinGame(out, scanner);
                 } else if (Objects.equals(line, "5")) {
                     if (!listed) {
-                        out.println("Please list the games first.");
+                        out.println("\nPlease list the games first.\n");
                         continue;
                     }
                     observeGame(out, scanner);
@@ -106,13 +106,13 @@ public class REPL {
             int status = e.statusCode();
             switch (status) {
                 case 400:
-                    out.println("Bad request.");
+                    out.println("Bad request.\n");
                     break;
                 case 401:
-                    out.println("Unauthorized.");
+                    out.println("Unauthorized.\n");
                     break;
                 case 403:
-                    out.println("Already taken.");
+                    out.println("Already taken.\n");
                     break;
             }
         }
@@ -120,7 +120,7 @@ public class REPL {
     }
 
     private void prelogin(PrintStream out) {
-        out.println("Welcome! Please type a number corresponding to the ones below.");
+        out.println("Welcome! Please enter a number corresponding to one of the ones below.");
         out.println("\t1. Register");
         out.println("\t2. Login");
         out.println("\t3. Help");
@@ -154,13 +154,13 @@ public class REPL {
             int status = e.statusCode();
             switch (status) {
                 case 400:
-                    out.println("Bad request.");
+                    out.println("Bad request.\n");
                     break;
                 case 401:
-                    out.println("Unauthorized.");
+                    out.println("Unauthorized.\n");
                     break;
                 case 403:
-                    out.println("Already taken.");
+                    out.println("Already taken.\n");
                     break;
             }
             return false;
@@ -178,7 +178,7 @@ public class REPL {
         } catch (ResponseException e) {
             int status = e.statusCode();
             if (status == 401) {
-                out.println("Unauthorized.");
+                out.println("Unauthorized.\n");
                 return false;
             }
         }
@@ -186,7 +186,7 @@ public class REPL {
     }
 
     private void postlogin(PrintStream out) {
-        out.println("Please type a number corresponding to the ones below.");
+        out.println("Please enter a number corresponding to one of the ones below.");
         out.println("\t1. Logout");
         out.println("\t2. Create Game");
         out.println("\t3. List Games");
@@ -219,7 +219,7 @@ public class REPL {
         out.println("Please enter the number of the game you wish to observe.");
         String number = scanner.nextLine();
         if (!allGames.containsKey(Integer.parseInt(number))) {
-            out.println("Invalid game number.");
+            out.println("Invalid game number.\n");
             observeGame(out, scanner);
         }
         new DrawBoard(new ChessGame()).drawBoard();
