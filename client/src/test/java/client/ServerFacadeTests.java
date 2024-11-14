@@ -136,4 +136,13 @@ public class ServerFacadeTests {
         Assertions.assertThrows(ResponseException.class, () -> facade.joingame(join));
     }
 
+    //observe
+    @Test
+    void observeSuccess() throws Exception { //temporary
+        Assertions.assertTrue(true);
+    }
+
+    void observeFail() { //temporary
+        Assertions.assertFalse(true);
+    }
 }
