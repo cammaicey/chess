@@ -64,6 +64,10 @@ public class REPL {
             } else if (Objects.equals(line, "2")) {
                 out.println("Please enter a name for your game.");
                 String name = scanner.nextLine();
+                while (name.trim().isEmpty()) {
+                    out.println("Please enter a name for your game.");
+                    name = scanner.nextLine();
+                }
                 client.creategame(name);
             } else if (Objects.equals(line, "3")) {
                 int num = 1;
@@ -198,7 +202,7 @@ public class REPL {
             break;
         }
         out.println("What color do you wish to be? Enter WHITE or BLACK.");
-        String color = scanner.nextLine();
+        String color = scanner.nextLine().toUpperCase();
         while (true) {
             if (Objects.equals(color, "WHITE") || Objects.equals(color, "BLACK")) {
                 break;
@@ -269,6 +273,7 @@ public class REPL {
     }
 
     private void gameMenuREPL(PrintStream out, Scanner scanner) {
+        gameMenu(out);
         boolean inGame = true;
 
         while (inGame) {
