@@ -209,7 +209,8 @@ public class REPL {
         joinData = new JoinData(color, allGames.get(Integer.parseInt(number)));
         try {
             client.joingame(joinData);
-            new DrawBoard(new ChessGame()).drawBoard();
+            gameMenu(out);
+            new DrawBoard(new ChessGame(), color).drawBoard();
         } catch (ResponseException e) {
             int status = e.statusCode();
             switch (status) {
@@ -243,7 +244,7 @@ public class REPL {
                 number = scanner.nextLine();
                 continue;
             }
-            new DrawBoard(new ChessGame()).drawBoard();;
+            new DrawBoard(new ChessGame(), "white").drawBoard();;
             break;
         }
     }
@@ -255,6 +256,15 @@ public class REPL {
             }
         }
         return true;
+    }
+
+    public void gameMenu(PrintStream out) {
+        out.println("\t1. Redraw Board");
+        out.println("\t2. Highlight Valid Moves");
+        out.println("\t3. Make a Move");
+        out.println("\t4. Leave");
+        out.println("\t5. Resign");
+        out.println("\t6. Help");
     }
 
 }

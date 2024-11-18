@@ -13,35 +13,39 @@ import static ui.EscapeSequences.*;
 public class DrawBoard {
 
     ChessGame game;
+    String color;
 
-    public DrawBoard(ChessGame game) {
+    public DrawBoard(ChessGame game, String color) {
         this.game = game;
+        this.color = color;
     }
 
     public void drawBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
         out.print(ERASE_SCREEN);
 
-        drawHeader(out, false);
+        if (!color.equalsIgnoreCase("WHITE")) {
+            //reverse
+            int row = 7;
 
-        for (int row = 0; row < 8; row++) {
-            drawRow(out, row, false);
+            drawHeader(out, true);
+
+            while (row >= 0) {
+                drawRow(out, row, true);
+                row--;
+            }
+
+            drawHeader(out, true);
         }
+        else {
+            drawHeader(out, false);
 
-        drawHeader(out, false);
-
-        //reverse
-        int row = 7;
-
-        drawHeader(out, true);
-
-        while (row >= 0) {
-            drawRow(out, row, true);
-            row--;
+            for (int row = 0; row < 8; row++) {
+                drawRow(out, row, false);
+            }
+            
+            drawHeader(out, false);
         }
-
-        drawHeader(out, true);
 
         out.print(RESET_TEXT_COLOR);
     }
