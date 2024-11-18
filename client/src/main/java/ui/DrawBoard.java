@@ -25,6 +25,15 @@ public class DrawBoard {
         out.print(ERASE_SCREEN);
 
         if (!color.equalsIgnoreCase("WHITE")) {
+            drawHeader(out, false);
+
+            for (int row = 0; row < 8; row++) {
+                drawRow(out, row, false);
+            }
+
+            drawHeader(out, false);
+        }
+        else {
             //reverse
             int row = 7;
 
@@ -36,15 +45,6 @@ public class DrawBoard {
             }
 
             drawHeader(out, true);
-        }
-        else {
-            drawHeader(out, false);
-
-            for (int row = 0; row < 8; row++) {
-                drawRow(out, row, false);
-            }
-            
-            drawHeader(out, false);
         }
 
         out.print(RESET_TEXT_COLOR);
