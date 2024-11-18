@@ -1,6 +1,5 @@
 package client;
 
-import com.google.gson.Gson;
 import exception.ResponseException;
 import model.JoinData;
 import model.ListData;
@@ -10,12 +9,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class ServerFacade {
-    private Communicator communicator;
+    private HttpCommunicator httpCommunicator;
     String auth;
     int gameID;
 
     public ServerFacade(String serverURL) {
-        communicator = new Communicator(this, serverURL);
+        httpCommunicator = new HttpCommunicator(this, serverURL);
     }
 
     public void setAuth(String auth) {
@@ -36,32 +35,32 @@ public class ServerFacade {
 
     public void register(UserData user) throws ResponseException, IOException {
         var path = "/user";
-        communicator.register("POST", path, user);
+        httpCommunicator.register("POST", path, user);
     }
 
     public void login(UserData user) throws ResponseException, URISyntaxException, IOException {
         var path = "/session";
-        communicator.login("POST", path, user);
+        httpCommunicator.login("POST", path, user);
     }
 
     public void logout() throws ResponseException, IOException {
         var path = "/session";
-        communicator.logout("DELETE", path);
+        httpCommunicator.logout("DELETE", path);
     }
 
     public ListData listgames() throws ResponseException, IOException {
         var path = "/game";
-        return communicator.listgames("GET", path);
+        return httpCommunicator.listgames("GET", path);
     }
 
     public int creategame(String name) throws ResponseException, IOException {
         var path = "/game";
-        communicator.creategame("POST", path, name);
+        httpCommunicator.creategame("POST", path, name);
         return gameID;
     }
 
     public void joingame(JoinData join) throws ResponseException, IOException {
         var path = "/game";
-        communicator.joingame("PUT", path, join);
+        httpCommunicator.joingame("PUT", path, join);
     }
 }

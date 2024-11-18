@@ -16,11 +16,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-public class Communicator {
+public class HttpCommunicator {
     private final String serverURL;
     private final ServerFacade serverFacade;
 
-    public Communicator(ServerFacade facade, String serverURL) {
+    public HttpCommunicator(ServerFacade facade, String serverURL) {
         this.serverURL = serverURL;
         this.serverFacade = facade;
     }
