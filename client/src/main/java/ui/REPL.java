@@ -211,6 +211,7 @@ public class REPL {
             client.joingame(joinData);
             gameMenu(out);
             new DrawBoard(new ChessGame(), color).drawBoard();
+            gameMenuREPL(out, scanner);
         } catch (ResponseException e) {
             int status = e.statusCode();
             switch (status) {
@@ -264,7 +265,37 @@ public class REPL {
         out.println("\t3. Make a Move");
         out.println("\t4. Leave");
         out.println("\t5. Resign");
-        out.println("\t6. Help");
+        out.println("\t6. Help\n");
     }
 
+    private void gameMenuREPL(PrintStream out, Scanner scanner) {
+        boolean inGame = true;
+
+        while (inGame) {
+            String line = scanner.nextLine();
+            if (line.equals("1")) {
+                //redraw board from player perspective
+            }
+            else if (line.equals("2")) {
+                //redraw the board with the valid moves for specific piece
+            }
+            else if (line.equals("3")) {
+                //(piece to move) / (where to move them)
+            }
+            else if (line.equals("4")) {
+                inGame = false;
+                //set player (white/black) as null
+            }
+            else if (line.equals("5")) {
+                //set game finished condition somewhere
+            }
+            else if (line.equals("6")) {
+                out.println("Press 1 to redraw the board.");
+                out.println("Press 2 to highlight moves you can make.");
+                out.println("Press 3 to make a move.");
+                out.println("Press 4 to leave the game and open a spot for a new player.");
+                out.println("Press 5 to resign and lose the game.\n");
+            }
+        }
+    }
 }
