@@ -1,20 +1,31 @@
 package client;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import com.google.gson.Gson;
 import exception.ResponseException;
 import model.JoinData;
 import model.ListData;
 import model.UserData;
+import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class ServerFacade {
     private HttpCommunicator httpCommunicator;
-    String auth;
-    int gameID;
+    private String auth;
+    private int gameID;
+    private WebSocketCommunicator webSocketCommunicator;
 
-    public ServerFacade(String serverURL) {
-        httpCommunicator = new HttpCommunicator(this, serverURL);
+    public ServerFacade(String domain) {
+        httpCommunicator = new HttpCommunicator(this, domain);
+        try {
+            webSocketCommunicator = new WebSocketCommunicator(domain);
+        }
+        catch (Exception e) {
+            System.out.println("Failed to make connection with server");
+        }
     }
 
     public void setAuth(String auth) {
@@ -63,4 +74,15 @@ public class ServerFacade {
         var path = "/game";
         httpCommunicator.joingame("PUT", path, join);
     }
+
+    public void sendCommand(UserGameCommand command) {
+        String message = new Gson().toJson(command);
+        webSocketCommunicator.sendMessage(message);
+    }
+
+    public void connPerson() {
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, getAuth(), getGameID());
+        sendCommand(command);
+    }
+
 }
