@@ -7,7 +7,6 @@ import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import org.eclipse.jetty.websocket.client.io.ConnectionManager;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -92,7 +91,6 @@ public class WebSocketHandler {
         String color;
 
         try {
-
             if (!username.equals(gameData.blackUsername()) && !username.equals(gameData.whiteUsername())) {
                 s = username + " has joined the game as an observer";
 
@@ -121,12 +119,12 @@ public class WebSocketHandler {
 
     private void resign(Session session, String username, UserGameCommand command, GameData gameData) {}
 
-    // Send the notification to all clients on the current game except the currSession
+    // Send notification to all clients on curr game except currSession
     public void broadcast(Session currSession, ServerMessage message) throws IOException {
         broadcast(currSession, message, false);
     }
 
-    // Send the notification to all clients on the current game
+    // Send notification to all clients on curr game
     public void broadcast(Session currSession, ServerMessage message, boolean self) throws IOException {
         System.out.printf("Broadcasting (toSelf: %s): %s%n", self, new Gson().toJson(message));
         for (Session session : connections.keySet()) {
