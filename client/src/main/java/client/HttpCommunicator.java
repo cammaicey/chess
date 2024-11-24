@@ -17,11 +17,11 @@ import java.net.URL;
 import java.util.*;
 
 public class HttpCommunicator {
-    private final String serverURL;
+    private final String domain;
     private final ServerFacade serverFacade;
 
-    public HttpCommunicator(ServerFacade facade, String serverURL) {
-        this.serverURL = serverURL;
+    public HttpCommunicator(ServerFacade facade, String domain) {
+        this.domain = domain;
         this.serverFacade = facade;
     }
 
@@ -64,7 +64,7 @@ public class HttpCommunicator {
         Map mapResult;
         HttpURLConnection http = null;
         try {
-            URL url = (new URI(serverURL + path)).toURL();
+            URL url = (new URI("http://" + domain + path)).toURL();
             http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
 

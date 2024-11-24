@@ -23,8 +23,8 @@ public class REPL {
     ServerFacade client;
     Map<Integer, Integer> allGames = new HashMap<>();
 
-    public REPL(String serverURL) {
-        client = new ServerFacade(serverURL);
+    public REPL(String domain) {
+        client = new ServerFacade(domain);
     }
 
     public void run() throws ResponseException, IOException, URISyntaxException {
@@ -213,9 +213,8 @@ public class REPL {
         joinData = new JoinData(color, allGames.get(Integer.parseInt(number)));
         try {
             client.joingame(joinData);
-            gameMenu(out);
-            new DrawBoard(new ChessGame(), color).drawBoard();
-            gameMenuREPL(out, scanner);
+            client.connPerson();
+            gameMenuREPL(out, scanner, color);
         } catch (ResponseException e) {
             int status = e.statusCode();
             switch (status) {
@@ -272,14 +271,15 @@ public class REPL {
         out.println("\t6. Help\n");
     }
 
-    private void gameMenuREPL(PrintStream out, Scanner scanner) {
+    private void gameMenuREPL(PrintStream out, Scanner scanner, String color) throws ResponseException {
         gameMenu(out);
+        new DrawBoard(new ChessGame(), color).drawBoard();
         boolean inGame = true;
 
         while (inGame) {
             String line = scanner.nextLine();
             if (line.equals("1")) {
-                //redraw board from player perspective
+                new DrawBoard(new ChessGame(), color).drawBoard();
             }
             else if (line.equals("2")) {
                 //redraw the board with the valid moves for specific piece

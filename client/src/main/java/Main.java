@@ -11,11 +11,11 @@ public class Main {
     public static void main(String[] args) throws ResponseException, IOException, URISyntaxException {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Client: " + piece);
-        var serverURL = "http://localhost:8080";
+        var domain = "localhost:8080";
         if (args.length == 1) {
-            serverURL = args[0];
+            domain = args[0];
         }
 
-        new REPL(serverURL).run();
+        new REPL(domain).run();
     }
 }
