@@ -19,12 +19,18 @@ import static ui.EscapeSequences.*;
 public class REPL {
     private UserData userData;
     private JoinData joinData;
+    private GameData gameData;
     boolean listed = false;
+    public static DrawBoard drawBoard;
     ServerFacade client;
     Map<Integer, Integer> allGames = new HashMap<>();
+    List<GameData> allGamesData = new ArrayList<>();
+    String color;
+    ChessGame game;
 
     public REPL(String domain) {
         client = new ServerFacade(domain);
+        drawBoard = new DrawBoard(game, color);
     }
 
     public void run() throws ResponseException, IOException, URISyntaxException {
@@ -71,9 +77,11 @@ public class REPL {
                 client.creategame(name);
             } else if (Objects.equals(line, "3")) {
                 int num = 1;
-                HashSet<GameData> games = client.listgames().games();
+                allGamesData = new ArrayList<>();
+                HashSet<GameData> gameSet = client.listgames();
+                allGamesData.addAll(gameSet);
 
-                for (GameData game : games) {
+                for (GameData game : gameSet) {
                     out.println(num + ". " + game.gameName());
                     out.println("\tWhite Player: " + game.whiteUsername());
                     out.println("\tBlack Player: " + game.blackUsername());
@@ -185,13 +193,12 @@ public class REPL {
     private void joinGame(PrintStream out, Scanner scanner) throws ResponseException, IOException {
         out.println("Please enter the number of the game you wish to join.");
         String number = scanner.nextLine();
-        boolean isNumeric = true;
+        boolean isNumeric;
         while (true) {
             isNumeric = checkNonNumeric(number);
             if (!isNumeric) {
                 out.println("Invalid game number.\nPlease enter the number of the game you wish to join.");
                 number = scanner.nextLine();
-                isNumeric = true;
                 continue;
             }
             if (!allGames.containsKey(Integer.parseInt(number))) {
@@ -211,9 +218,11 @@ public class REPL {
             color = scanner.nextLine();
         }
         joinData = new JoinData(color, allGames.get(Integer.parseInt(number)));
+        //get game
+        gameData = allGamesData.get(Integer.parseInt(number));
         try {
             client.joingame(joinData);
-            client.connPerson();
+            client.connPerson(game, color);
             gameMenuREPL(out, scanner, color);
         } catch (ResponseException e) {
             int status = e.statusCode();
@@ -273,7 +282,6 @@ public class REPL {
 
     private void gameMenuREPL(PrintStream out, Scanner scanner, String color) throws ResponseException {
         gameMenu(out);
-        new DrawBoard(new ChessGame(), color).drawBoard();
         boolean inGame = true;
 
         while (inGame) {
