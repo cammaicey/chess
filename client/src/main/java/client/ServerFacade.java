@@ -61,7 +61,7 @@ public class ServerFacade {
         httpCommunicator.logout("DELETE", path);
     }
 
-    public Object listgames() throws ResponseException, IOException {
+    public HashSet<GameData> listgames() throws ResponseException, IOException {
         var path = "/game";
         return httpCommunicator.listgames("GET", path);
     }
