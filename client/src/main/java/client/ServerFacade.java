@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.GameData;
 import model.JoinData;
 import model.ListData;
 import model.UserData;
@@ -11,6 +12,7 @@ import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 
 public class ServerFacade {
     private HttpCommunicator httpCommunicator;
@@ -59,7 +61,7 @@ public class ServerFacade {
         httpCommunicator.logout("DELETE", path);
     }
 
-    public ListData listgames() throws ResponseException, IOException {
+    public Object listgames() throws ResponseException, IOException {
         var path = "/game";
         return httpCommunicator.listgames("GET", path);
     }
@@ -75,14 +77,15 @@ public class ServerFacade {
         httpCommunicator.joingame("PUT", path, join);
     }
 
-    public void sendCommand(UserGameCommand command) {
+    public void sendCommand(UserGameCommand command, ChessGame game, String color) {
         String message = new Gson().toJson(command);
+        webSocketCommunicator.setGameAndColor(game, color);
         webSocketCommunicator.sendMessage(message);
     }
 
-    public void connPerson() {
+    public void connPerson(ChessGame game, String color) {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, getAuth(), getGameID());
-        sendCommand(command);
+        sendCommand(command, game, color);
     }
 
 }
