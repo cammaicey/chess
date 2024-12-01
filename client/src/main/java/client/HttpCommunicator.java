@@ -2,6 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.GameData;
 import model.JoinData;
 import model.ListData;
 import model.UserData;
@@ -48,10 +49,10 @@ public class HttpCommunicator {
         serverFacade.setGameID(id);
     }
 
-    public ListData listgames(String action, String path) throws ResponseException, IOException {
+    public HashSet<GameData> listgames(String action, String path) throws ResponseException, IOException {
         String games = this.makeRequest(action, path, null, null);
         var json = new Gson().fromJson(games, ListData.class);
-        return json;
+        return json.games();
     }
 
     public void joingame(String action, String path, JoinData join) throws ResponseException, IOException {
